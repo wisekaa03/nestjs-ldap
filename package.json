@@ -1,6 +1,6 @@
 {
   "name": "nestjs-ldap",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "NestJS library to access LDAP",
   "author": "Stanislav V Vyaliy",
   "license": "MIT",
@@ -13,7 +13,7 @@
     "url": "https://github.com/wisekaa03/nestjs-ldap.git"
   },
   "scripts": {
-    "build": "rimraf ./dist && tsc -p tsconfig.build.json",
+    "build": "rimraf ./dist && tsc -p tsconfig.json",
     "prepublish": "yarn run build",
     "publish-public": "yarn publish --access public",
     "lint": "node ./node_modules/eslint/bin/eslint.js lib/**"
@@ -23,11 +23,11 @@
     "cache-manager": "^3",
     "cache-manager-redis-store": "^2",
     "ldapjs": "^2",
-    "nestjs-pino": "latest",
-    "rxjs": "^6"
+    "nestjs-pino": "latest"
   },
   "devDependencies": {
     "@nestjs/common": "^7",
+    "rxjs": "latest",
     "@types/bcrypt": "latest",
     "@types/cache-manager": "latest",
     "@types/ldapjs": "^1",

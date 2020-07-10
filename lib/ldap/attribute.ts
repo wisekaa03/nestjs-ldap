@@ -8,7 +8,7 @@ import asn1 from 'asn1';
 import { Protocol } from './protocol';
 
 export class Attribute {
-  public _vals: Record<any, any>;
+  public _vals?: Record<any, any>;
 
   public type: any;
 
@@ -18,7 +18,7 @@ export class Attribute {
    * @returns {string | Buffer}
    */
   get vals(): string | Buffer {
-    return this._vals.map((v: any) => v.toString(this.bufferEncoding(this.type)));
+    return this._vals?.map((v: any) => v.toString(this.bufferEncoding(this.type)));
   }
 
   /**
@@ -43,7 +43,7 @@ export class Attribute {
    * @returns {Record<any, any>} buffers
    */
   get buffers(): Record<any, any> {
-    return this._vals;
+    return this._vals || {};
   }
 
   /**
@@ -74,9 +74,9 @@ export class Attribute {
 
   addValue = (val: Buffer | string): void => {
     if (Buffer.isBuffer(val)) {
-      this._vals.push(val);
+      this._vals?.push(val);
     } else {
-      this._vals.push(Buffer.from(val, this.bufferEncoding(this.type)));
+      this._vals?.push(Buffer.from(val, this.bufferEncoding(this.type)));
     }
   };
 
@@ -126,7 +126,7 @@ export class Attribute {
     if (ber.peek() === Protocol.LBER_SET) {
       if (ber.readSequence(Protocol.LBER_SET)) {
         const end = ber.offset + ber.length;
-        while (ber.offset < end) this._vals.push(ber.readString(asn1.Ber.OctetString, true));
+        while (ber.offset < end) this._vals?.push(ber.readString(asn1.Ber.OctetString, true));
       }
     }
 
@@ -143,7 +143,7 @@ export class Attribute {
     ber.startSequence();
     ber.writeString(this.type);
     ber.startSequence(Protocol.LBER_SET);
-    if (this._vals.length) {
+    if (this._vals?.length) {
       this._vals.forEach((b: any) => {
         ber.writeByte(asn1.Ber.OctetString);
         ber.writeLength(b.length);

@@ -6,7 +6,7 @@ import { Attribute } from './attribute';
 export class Change {
   private _modification: Attribute | Record<any, any>;
 
-  private _operation: number;
+  private _operation?: number;
 
   get operation(): 'add' | 'delete' | 'replace' {
     switch (this._operation) {
@@ -17,7 +17,7 @@ export class Change {
       case 0x02:
         return 'replace';
       default:
-        throw new Error(`0x${this._operation.toString(16)} is invalid`);
+        throw new Error(`0x${this._operation?.toString(16)} is invalid`);
     }
   }
 

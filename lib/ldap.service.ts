@@ -38,9 +38,9 @@ export class LdapService extends EventEmitter {
 
   private getGroups: (user: Ldap.SearchEntryObject) => Promise<Ldap.SearchEntryObject>;
 
-  private userCacheStore: cacheManager.Store;
+  private userCacheStore?: cacheManager.Store;
 
-  private userCache: cacheManager.Cache;
+  private userCache?: cacheManager.Cache;
 
   private salt: string;
 
@@ -62,7 +62,7 @@ export class LdapService extends EventEmitter {
 
     if (options.cacheUrl) {
       this.ttl = options.cacheTtl || 60;
-      this.salt = bcrypt.genSaltSync(10);
+      this.salt = bcrypt.genSaltSync(6);
 
       this.userCacheStore = redisStore.create({
         // A string used to prefix all used keys (e.g. namespace:test).
@@ -91,13 +91,18 @@ export class LdapService extends EventEmitter {
         // retry_strategy
       });
 
-      this.userCache = cacheManager.caching({
-        store: this.userCacheStore,
-        ttl: this.ttl,
-        // max: configService.get<number>('LDAP_REDIS_MAX'),
-      });
+      if (this.userCacheStore) {
+        this.userCache = cacheManager.caching({
+          store: this.userCacheStore,
+          ttl: this.ttl,
+          // max: configService.get<number>('LDAP_REDIS_MAX'),
+        });
+        this.logger.debug('Redis connection: success');
+      }
 
-      this.logger.debug('Redis connection: success');
+    } else {
+      this.salt = '';
+      this.ttl = 60;
     }
 
     this.clientOpts = {

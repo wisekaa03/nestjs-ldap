@@ -1,0 +1,187 @@
+{
+  "folders": [
+    {
+      "path": ".."
+    }
+  ],
+  "settings": {
+    "editor.fontFamily": "Fira Code Retina",
+    "editor.fontLigatures": true,
+    "editor.fontWeight": "400", // Regular
+    "jest.debugMode": false,
+    "jest.pathToJest": "yarn test",
+    "jest.restartJestOnSnapshotUpdate": true,
+    "javascript.format.enable": false,
+    "typescript.format.enable": false,
+    "files.autoSave": "onWindowChange",
+    "editor.formatOnSave": true,
+    "[html]": {
+      "editor.formatOnSave": false
+    },
+    "[md]": {
+      "editor.formatOnSave": false
+    },
+    "[yaml]": {
+      "editor.formatOnSave": false
+    },
+    "[graphql]": {
+      "editor.formatOnSave": false
+    },
+    "[javascript]": {
+      "editor.formatOnSave": false
+    },
+    "[javascriptreact]": {
+      "editor.formatOnSave": false
+    },
+    "[typescript]": {
+      "editor.formatOnSave": false
+    },
+    "[typescriptreact]": {
+      "editor.formatOnSave": false
+    },
+    "typescript.tsdk": "node_modules/typescript/lib",
+    "less.lint.duplicateProperties": "warning",
+    "less.lint.float": "warning",
+    "eslint.enable": true,
+    "eslint.lintTask.enable": true,
+    "eslint.alwaysShowStatus": true,
+    "eslint.packageManager": "yarn",
+    "eslint.trace.server": "verbose",
+    "eslint.validate": [
+      "css",
+      "graphql",
+      "html",
+      "javascript",
+      "javascriptreact",
+      "json",
+      "json5",
+      "jsonc",
+      "less",
+      "markdown",
+      "mdx",
+      "mongo",
+      "postcss",
+      "scss",
+      "typescript",
+      "typescriptreact",
+      "vue",
+      "yaml"    
+    ],
+    "prettier.disableLanguages": [
+      "vue"
+    ],
+    "editor.tabSize": 2,
+    "scss.lint.boxModel": "warning",
+    "scss.lint.compatibleVendorPrefixes": "warning",
+    "scss.lint.duplicateProperties": "warning",
+    "scss.lint.float": "warning",
+    "scss.lint.idSelector": "warning",
+    "scss.lint.ieHack": "warning",
+    "scss.lint.important": "warning",
+    "scss.lint.importStatement": "warning",
+    "scss.lint.universalSelector": "warning",
+    "scss.lint.unknownVendorSpecificProperties": "warning",
+    "scss.lint.zeroUnits": "warning",
+    "better-comments.tags": [
+      {
+        "tag": "!",
+        "color": "#FF2D00",
+        "strikethrough": false,
+        "backgroundColor": "transparent"
+      },
+      {
+        "tag": "?",
+        "color": "#3498DB",
+        "strikethrough": false,
+        "backgroundColor": "transparent"
+      },
+      {
+        "tag": "//",
+        "color": "#474747",
+        "strikethrough": true,
+        "backgroundColor": "transparent"
+      },
+      {
+        "tag": "todo",
+        "color": "#FF8C00",
+        "strikethrough": false,
+        "backgroundColor": "transparent"
+      },
+      {
+        "tag": "fixme",
+        "color": "#FFD666",
+        "strikethrough": false,
+        "backgroundColor": "transparent"
+      },
+      {
+        "tag": "debug",
+        "color": "#FF0000",
+        "strikethrough": false,
+        "backgroundColor": "transparent"
+      },
+      {
+        "tag": "eslint",
+        "color": "#FFD666",
+        "strikethrough": false,
+        "backgroundColor": "transparent"
+      },
+      {
+        "tag": "*",
+        "color": "#98C379",
+        "strikethrough": false,
+        "backgroundColor": "transparent"
+      }
+    ],
+    "todo-tree.highlights.customHighlight": {
+      "TODO": {
+        "icon": "issue-opened",
+        "foreground": "#FF8C00",
+        "iconColour": "#FF8C00"
+      },
+      "FIXME": {
+        "icon": "bug",
+        "foreground": "#FFD666",
+        "iconColour": "#FFD666"
+      },
+      "DEBUG": {
+        "icon": "bug",
+        "foreground": "#FFD666",
+        "iconColour": "#FFD666"
+      }
+    },
+    "todo-tree.highlights.defaultHighlight": {
+      "icon": "check",
+      "type": "line",
+      "foreground": "red",
+      "background": "white",
+      "opacity": 10,
+      "iconColour": "#FF8C00"
+    },
+    "editor.codeActionsOnSave": {
+      "source.fixAll.eslint": true
+    },
+    "npm.packageManager": "yarn",
+    "debug.node.autoAttach": "on",
+    "cSpell.language": "en,ru,en-GB,en-US",
+    "cSpell.allowCompoundWords": true,
+    "cSpell.enableFiletypes": [
+      "javascript",
+      "javascriptreact",
+      "typescript",
+      "typescriptreact",
+      "json",
+      "yaml",
+      "yml",
+      "markdown",
+      "jsonc"
+    ],
+    "cSpell.ignorePaths": [
+      "**/package-lock.json",
+      "**/node_modules/**",
+      "**/vscode-extension/**",
+      "**/.git/objects/**",
+      ".vscode",
+      "**/yarn.lock"
+    ]
+  }
+}

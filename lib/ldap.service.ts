@@ -186,6 +186,24 @@ export class LdapService extends EventEmitter {
     '';
 
   /**
+   * Ldap Date
+
+   * @param {string} string
+   */
+  fromLDAPString = function (string: string): Date | null {
+    var b = string.match(/\d\d/g);
+
+    return b && new Date(Date.UTC(
+      Number.parseInt(b[0]+b[1], 10),
+      Number.parseInt(b[2], 10)-1,
+      Number.parseInt(b[3], 10),
+      Number.parseInt(b[4], 10),
+      Number.parseInt(b[5], 10),
+      Number.parseInt(b[6], 10),
+    ));
+  };
+
+  /**
    * Mark admin client unbound so reconnect works as expected and re-emit the error
    *
    * @private
@@ -318,7 +336,7 @@ export class LdapService extends EventEmitter {
                     case 'whenChanged':
                       return {
                         ...o,
-                        [key]: new Date(entry.object[k] as string),
+                        [key]: this.fromLDAPString(entry.object[k] as string),
                       };
                     default:
                   }

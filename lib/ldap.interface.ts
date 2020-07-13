@@ -69,8 +69,8 @@ export interface LdapResponseGroup {
   // Object GUID - ID in ldap
   objectGUID: string;
 
-  whenChanged: string;
-  whenCreated: string;
+  whenChanged: Date;
+  whenCreated: Date;
 }
 
 export interface LdapResponseUser {
@@ -254,8 +254,8 @@ export interface LdapResponseUser {
 
   'userPrincipalName': string;
 
-  'whenChanged': string;
-  'whenCreated': string;
+  'whenChanged': Date;
+  'whenCreated': Date;
 
   /* Active Directory */
   'msDS-cloudExtensionAttribute1': string;

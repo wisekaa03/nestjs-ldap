@@ -12,9 +12,6 @@
     "type": "git",
     "url": "https://github.com/wisekaa03/nestjs-ldap.git"
   },
-  "publishConfig": {
-    "registry": "https://npm.pkg.github.com/"
-  },
   "scripts": {
     "build": "rimraf ./dist && tsc -p tsconfig.json",
     "prepublish": "yarn run build",

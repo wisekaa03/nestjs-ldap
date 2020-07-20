@@ -8,7 +8,9 @@
     "removeComments": true,
     "noImplicitAny": false,
     "noImplicitThis": false,
-    "sourceMap": true,
+
+    "inlineSourceMap": true,
+    "inlineSources": true,
 
     "outDir": "./dist",
     "moduleResolution": "node",

@@ -1,6 +1,6 @@
 {
   "name": "nestjs-ldap",
-  "version": "0.0.15",
+  "version": "0.1.0",
   "description": "NestJS library to access LDAP",
   "author": "Stanislav V Vyaliy",
   "license": "MIT",
@@ -19,28 +19,28 @@
     "lint": "node ./node_modules/eslint/bin/eslint.js lib/**"
   },
   "dependencies": {
-    "bcrypt": "latest",
+    "bcrypt": "^5",
     "cache-manager": "^3",
     "cache-manager-redis-store": "^2",
     "ldapjs": "^2",
-    "nestjs-pino": "latest"
+    "nestjs-pino": "^1"
   },
   "devDependencies": {
     "@nestjs/common": "^7",
-    "rxjs": "latest",
-    "@types/bcrypt": "latest",
-    "@types/cache-manager": "latest",
-    "@types/ldapjs": "latest",
-    "@types/node": "latest",
-    "@typescript-eslint/eslint-plugin": "latest",
-    "@typescript-eslint/parser": "latest",
-    "eslint": "latest",
-    "eslint-config-prettier": "latest",
-    "eslint-plugin-import": "latest",
-    "prettier": "latest",
+    "@types/bcrypt": "^3",
+    "@types/cache-manager": "^2",
+    "@types/ldapjs": "^1",
+    "@types/node": "^14",
+    "@typescript-eslint/eslint-plugin": "^3",
+    "@typescript-eslint/parser": "^3",
+    "eslint": "^7",
+    "eslint-config-prettier": "^6",
+    "eslint-plugin-import": "^2",
+    "prettier": "^2",
     "reflect-metadata": "^0.1",
-    "rimraf": "latest",
-    "tsconfig-paths": "latest",
+    "rimraf": "^3",
+    "rxjs": "^6",
+    "tsconfig-paths": "^3",
     "typescript": "^3"
   }
 }

@@ -1,11 +1,17 @@
 module.exports = {
   parser: '@typescript-eslint/parser',
   parserOptions: {
-    project: 'tsconfig.json',
     sourceType: 'module',
+    jsx: true,
+    useJSXTextNode: true,
+    ecmaVersion: 2020,
+    ecmaFeatures: {
+      jsx: true,
+    },
+    // project: ['./tsconfig.json', 'apps/*/tsconfig.json', 'libs/*/tsconfig.json'],
   },
   plugins: [
-    '@typescript-eslint/eslint-plugin',
+    '@typescript-eslint',
   ],
   extends: [
     'plugin:@typescript-eslint/eslint-recommended',
@@ -14,10 +20,12 @@ module.exports = {
     'prettier/@typescript-eslint',
   ],
   settings: {
-    'import/resolver': {
-      node: {
-        extensions: ['.ts', '.tsx', '.js', '.jsx'],
-      },
+    typescript: {
+      // alwaysTryTypes: true,
+      project: ['tsconfig.json'],
+    },
+    node: {
+      extensions: ['.ts', '.tsx', '.js', '.jsx'],
     },
   },
   root: true,

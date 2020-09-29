@@ -519,11 +519,11 @@ export class LdapService extends EventEmitter {
 
         if (user && this.userCache) {
           this.logger.debug(`To cache: ${user.dn}`);
-          this.userCache.set<LDAPCache>(`dn:${user.dn}`, { user, password: LDAP_PASSWORD_NULL }, this.ttl);
+          this.userCache.set<LDAPCache>(`dn:${user.dn}`, { user, password: LDAP_PASSWORD_NULL }, { ttl: this.ttl });
 
           if (user.sAMAccountName) {
             this.logger.debug(`To cache: ${user.sAMAccountName}`);
-            this.userCache.set<LDAPCache>(`user:${user.sAMAccountName}`, { user, password: LDAP_PASSWORD_NULL }, this.ttl);
+            this.userCache.set<LDAPCache>(`user:${user.sAMAccountName}`, { user, password: LDAP_PASSWORD_NULL }, { ttl: this.ttl });
           }
         }
 
@@ -586,11 +586,11 @@ export class LdapService extends EventEmitter {
       .then((user) => {
         if (user && this.userCache) {
           this.logger.debug(`To cache: ${userByDN}`);
-          this.userCache.set<LDAPCache>(cachedID, { user, password: LDAP_PASSWORD_NULL }, this.ttl);
+          this.userCache.set<LDAPCache>(cachedID, { user, password: LDAP_PASSWORD_NULL }, { ttl: this.ttl });
 
           if (user.sAMAccountName) {
             this.logger.debug(`To cache: ${user.sAMAccountName}`);
-            this.userCache.set<LDAPCache>(`user:${user.sAMAccountName}`, { user, password: LDAP_PASSWORD_NULL }, this.ttl);
+            this.userCache.set<LDAPCache>(`user:${user.sAMAccountName}`, { user, password: LDAP_PASSWORD_NULL }, { ttl: this.ttl });
           }
         }
 
@@ -848,7 +848,7 @@ export class LdapService extends EventEmitter {
                   user: userWithGroups,
                   password: bcrypt.hashSync(password, this.salt),
                 },
-                this.ttl,
+                { ttl: this.ttl },
               );
             }
 

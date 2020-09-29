@@ -22,6 +22,8 @@ import {
 import { Change } from './ldap/change';
 //#endregion
 
+const LDAP_PASSWORD_NULL = 'nCN34c23~_@093429!*%3w32-23787';
+
 @Injectable()
 export class LdapService extends EventEmitter {
   private clientOpts: Ldap.ClientOptions;
@@ -499,9 +501,11 @@ export class LdapService extends EventEmitter {
    * @returns {Promise<LdapResponseUser>} User in LDAP
    */
   public async searchByUsername(userByUsername: string, cache = true): Promise<LdapResponseUser> {
+    const cachedID = `user:${userByUsername}`;
+
     if (cache && this.userCache) {
       // Check cache. 'cached' is `{password: <hashed-password>, user: <user>}`.
-      const cached: LDAPCache = await this.userCache.get<LDAPCache>(userByUsername);
+      const cached: LDAPCache = await this.userCache.get<LDAPCache>(cachedID);
       if (cached && cached.user && cached.user.sAMAccountName) {
         this.logger.debug(`From cache: ${cached.user.sAMAccountName}`);
 
@@ -515,11 +519,11 @@ export class LdapService extends EventEmitter {
 
         if (user && this.userCache) {
           this.logger.debug(`To cache: ${user.dn}`);
-          this.userCache.set<LDAPCache>(user.dn, { user, password: '' }, this.ttl);
+          this.userCache.set<LDAPCache>(`dn:${user.dn}`, { user, password: LDAP_PASSWORD_NULL }, this.ttl);
 
           if (user.sAMAccountName) {
             this.logger.debug(`To cache: ${user.sAMAccountName}`);
-            this.userCache.set<LDAPCache>(user.sAMAccountName, { user, password: '' }, this.ttl);
+            this.userCache.set<LDAPCache>(`user:${user.sAMAccountName}`, { user, password: LDAP_PASSWORD_NULL }, this.ttl);
           }
         }
 
@@ -540,9 +544,10 @@ export class LdapService extends EventEmitter {
    * @returns {Promise<LdapResponseUser>} User in LDAP
    */
   public async searchByDN(userByDN: string, cache = true): Promise<LdapResponseUser> {
+    const cachedID = `dn:${userByDN}`;
     if (cache && this.userCache) {
       // Check cache. 'cached' is `{password: <hashed-password>, user: <user>}`.
-      const cached: LDAPCache = await this.userCache.get<LDAPCache>(userByDN);
+      const cached: LDAPCache = await this.userCache.get<LDAPCache>(cachedID);
       if (cached && cached.user && cached.user.sAMAccountName) {
         this.logger.debug(`From cache: ${cached.user.sAMAccountName}`);
 
@@ -581,11 +586,11 @@ export class LdapService extends EventEmitter {
       .then((user) => {
         if (user && this.userCache) {
           this.logger.debug(`To cache: ${userByDN}`);
-          this.userCache.set<LDAPCache>(userByDN, { user, password: '' }, this.ttl);
+          this.userCache.set<LDAPCache>(cachedID, { user, password: LDAP_PASSWORD_NULL }, this.ttl);
 
           if (user.sAMAccountName) {
             this.logger.debug(`To cache: ${user.sAMAccountName}`);
-            this.userCache.set<LDAPCache>(user.sAMAccountName, { user, password: '' }, this.ttl);
+            this.userCache.set<LDAPCache>(`user:${user.sAMAccountName}`, { user, password: LDAP_PASSWORD_NULL }, this.ttl);
           }
         }
 
@@ -783,6 +788,8 @@ export class LdapService extends EventEmitter {
    * @throws {Error}
    */
   public async authenticate(username: string, password: string): Promise<LdapResponseUser> {
+    const cachedID = `user:${username}`;      
+
     if (typeof password === 'undefined' || password === null || password === '') {
       this.logger.error('No password given');
       throw new Error('No password given');
@@ -790,13 +797,13 @@ export class LdapService extends EventEmitter {
 
     if (this.userCache) {
       // Check cache. 'cached' is `{password: <hashed-password>, user: <user>}`.
-      const cached: LDAPCache = await this.userCache.get<LDAPCache>(username);
+      const cached: LDAPCache = await this.userCache.get<LDAPCache>(cachedID);
       if (
         cached &&
         cached.user &&
         cached.user.sAMAccountName &&
         cached.password &&
-        bcrypt.compareSync(password, cached.password)
+        (cached.password === LDAP_PASSWORD_NULL || bcrypt.compareSync(password, cached.password))
       ) {
         this.logger.debug(`From cache: ${cached.user.sAMAccountName}`);
 
@@ -836,7 +843,7 @@ export class LdapService extends EventEmitter {
               this.logger.debug(`To cache: ${userWithGroups.sAMAccountName}`);
 
               this.userCache.set<LDAPCache>(
-                userWithGroups.sAMAccountName,
+                `user:${userWithGroups.sAMAccountName}`,
                 {
                   user: userWithGroups,
                   password: bcrypt.hashSync(password, this.salt),

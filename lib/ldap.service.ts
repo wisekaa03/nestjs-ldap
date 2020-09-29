@@ -67,7 +67,7 @@ export class LdapService extends EventEmitter {
       this.userCacheStore = redisStore.create({
         // A string used to prefix all used keys (e.g. namespace:test).
         // Please be aware that the keys command will not be prefixed.
-        prefix: 'LDAP',
+        prefix: 'LDAP:',
         url: options.cacheUrl, // IP address of the Redis server
         // If set, client will run Redis auth command on connect.
         // path - The UNIX socket string of the Redis server
@@ -191,7 +191,7 @@ export class LdapService extends EventEmitter {
    * @param {string} string
    */
   fromLDAPString = function (string: string): Date | null {
-    var b = string.match(/\d\d/g);
+    const b = string.match(/\d\d/g);
 
     return b && new Date(Date.UTC(
       Number.parseInt(b[0]+b[1], 10),

@@ -1,6 +1,6 @@
 {
   "name": "nestjs-ldap",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "NestJS library to access LDAP",
   "author": "Stanislav V Vyaliy",
   "license": "MIT",
@@ -8,6 +8,9 @@
     "nestjs",
     "ldap"
   ],
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/wisekaa03/nestjs-ldap.git"
@@ -27,6 +30,7 @@
   },
   "devDependencies": {
     "@nestjs/common": "^7",
+    "@types/asn1": "*",
     "@types/bcrypt": "*",
     "@types/cache-manager": "*",
     "@types/ldapjs": "*",

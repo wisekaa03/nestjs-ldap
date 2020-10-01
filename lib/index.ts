@@ -1,4 +1,5 @@
 /** @format */
+// Copyright 2020 Stanislav V Vyaliy.  All rights reserved.
 
 export * from './ldap/change';
 export * from './ldap/attribute';

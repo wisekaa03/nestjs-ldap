@@ -1,5 +1,4 @@
 /** @format */
-
 // Copyright 2020 Stanislav V Vyalyi.  All rights reserved.
 
 export const Protocol = {

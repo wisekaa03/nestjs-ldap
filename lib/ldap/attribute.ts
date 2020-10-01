@@ -1,10 +1,7 @@
 /** @format */
-/* eslint-disable import/no-extraneous-dependencies */
-
 // Copyright 2020 Stanislav V Vyaliy.  All rights reserved.
 
 import asn1 from 'asn1';
-
 import { Protocol } from './protocol';
 
 export class Attribute {
@@ -158,5 +155,3 @@ export class Attribute {
     return ber;
   };
 }
-
-/* eslint-enable import/no-extraneous-dependencies */

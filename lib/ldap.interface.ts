@@ -1,4 +1,5 @@
 /** @format */
+// Copyright 2020 Stanislav V Vyaliy.  All rights reserved.
 
 //#region Imports NPM
 import { Logger } from '@nestjs/common';

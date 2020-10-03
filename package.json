@@ -8,9 +8,6 @@
     "nestjs",
     "ldap"
   ],
-  "publishConfig": {
-    "registry": "https://npm.pkg.github.com/"
-  },
   "repository": {
     "type": "git",
     "url": "https://github.com/wisekaa03/nestjs-ldap.git"

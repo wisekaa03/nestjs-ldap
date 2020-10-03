@@ -6,9 +6,18 @@ import { Inject, Injectable } from '@nestjs/common';
 import { PinoLogger, InjectPinoLogger } from 'nestjs-pino';
 import Ldap from 'ldapjs';
 import { EventEmitter } from 'events';
-import * as cacheManager from 'cache-manager';
-import * as redisStore from 'cache-manager-redis-store';
+import * as CacheManager from 'cache-manager';
+import * as RedisStore from 'cache-manager-redis-store';
 import bcrypt from 'bcrypt';
+export type {
+  InsufficientAccessRightsError,
+  InvalidCredentialsError,
+  EntryAlreadyExistsError,
+  NoSuchObjectError,
+  NoSuchAttributeError,
+  ProtocolError,
+  OperationsError
+} from 'ldapjs';
 //#endregion
 //#region Imports Local
 import {
@@ -41,9 +50,9 @@ export class LdapService extends EventEmitter {
 
   private getGroups: (user: Ldap.SearchEntryObject) => Promise<Ldap.SearchEntryObject>;
 
-  private userCacheStore?: cacheManager.Store;
+  private userCacheStore?: CacheManager.Store;
 
-  private userCache?: cacheManager.Cache;
+  private userCache?: CacheManager.Cache;
 
   private salt: string;
 
@@ -64,10 +73,10 @@ export class LdapService extends EventEmitter {
     super();
 
     if (options.cacheUrl) {
-      this.ttl = options.cacheTtl || 60;
+      this.ttl = options.cacheTtl || 600;
       this.salt = bcrypt.genSaltSync(6);
 
-      this.userCacheStore = redisStore.create({
+      this.userCacheStore = RedisStore.create({
         // A string used to prefix all used keys (e.g. namespace:test).
         // Please be aware that the keys command will not be prefixed.
         prefix: 'LDAP:',
@@ -95,7 +104,7 @@ export class LdapService extends EventEmitter {
       });
 
       if (this.userCacheStore) {
-        this.userCache = cacheManager.caching({
+        this.userCache = CacheManager.caching({
           store: this.userCacheStore,
           ttl: this.ttl,
           // max: configService.get<number>('LDAP_REDIS_MAX'),

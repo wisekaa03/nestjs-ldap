@@ -9,7 +9,7 @@ import { EventEmitter } from 'events';
 import * as CacheManager from 'cache-manager';
 import * as RedisStore from 'cache-manager-redis-store';
 import bcrypt from 'bcrypt';
-export type {
+export {
   InsufficientAccessRightsError,
   InvalidCredentialsError,
   EntryAlreadyExistsError,

@@ -16,7 +16,8 @@ export type {
   NoSuchObjectError,
   NoSuchAttributeError,
   ProtocolError,
-  OperationsError
+  OperationsError,
+  Error as LdapError
 } from 'ldapjs';
 //#endregion
 //#region Imports Local

@@ -3,7 +3,8 @@
 
 //#region Imports NPM
 import { Inject, Injectable } from '@nestjs/common';
-import { PinoLogger, InjectPinoLogger } from 'nestjs-pino';
+import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
+import { Logger } from 'winston';
 import Ldap from 'ldapjs';
 import { EventEmitter } from 'events';
 import * as CacheManager from 'cache-manager';
@@ -69,7 +70,7 @@ export class LdapService extends EventEmitter {
    */
   constructor(
     @Inject(LDAP_OPTIONS) private readonly options: LdapModuleOptions,
-    @InjectPinoLogger(LdapService.name) private readonly logger: PinoLogger,
+    @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
   ) {
     super();
 

@@ -83,7 +83,7 @@ export interface LdapResponseUser {
   /**
    * Ldap response groups
    */
-  'groups': LdapResponseGroup[];
+  'groups'?: LdapResponseGroup[];
 
   /**
    * Country
@@ -138,7 +138,9 @@ export interface LdapResponseUser {
   /**
    * Employee ID
    */
-  'employeeID': string;
+  'employeeID'?: string;
+  'employeeNumber'?: string;
+  'employeeType'?: string;
 
   /**
    * Given name
@@ -154,12 +156,6 @@ export interface LdapResponseUser {
    * Locality
    */
   'l': string;
-
-  // Logon, logoff
-  'logonCount': string;
-  'lastLogoff': string;
-  'lastLogon': string;
-  'lastLogonTimestamp': string;
 
   // Lockout time
   'lockoutTime': string;
@@ -244,6 +240,8 @@ export interface LdapResponseUser {
    */
   'jpegPhoto': string[];
 
+  'carLicense'?: string;
+
   /**
    * Work title
    */
@@ -255,36 +253,46 @@ export interface LdapResponseUser {
 
   'userPrincipalName': string;
 
-  'whenChanged': Date;
-  'whenCreated': Date;
+  'whenChanged'?: Date;
+  'whenCreated'?: Date;
+  'badPasswordTime'?: Date
+  'badPwdCount'?: number;
+
+  // Logon, logoff
+  'logonCount'?: number;
+  'lastLogoff'?: Date;
+  'lastLogon'?: Date;
+  'lastLogonTimestamp'?: Date;
+
+  'pwdLastSet'?: Date;
 
   /* Active Directory */
-  'msDS-cloudExtensionAttribute1': string;
-  'msDS-cloudExtensionAttribute2': string;
+  'msDS-cloudExtensionAttribute1'?: string;
+  'msDS-cloudExtensionAttribute2'?: string;
 
   /* In our AD: Date of birth */
-  'msDS-cloudExtensionAttribute3': string;
+  'msDS-cloudExtensionAttribute3'?: string;
 
-  'msDS-cloudExtensionAttribute4': string;
-  'msDS-cloudExtensionAttribute5': string;
-  'msDS-cloudExtensionAttribute6': string;
-  'msDS-cloudExtensionAttribute7': string;
-  'msDS-cloudExtensionAttribute8': string;
-  'msDS-cloudExtensionAttribute9': string;
-  'msDS-cloudExtensionAttribute10': string;
-  'msDS-cloudExtensionAttribute11': string;
-  'msDS-cloudExtensionAttribute12': string;
+  'msDS-cloudExtensionAttribute4'?: string;
+  'msDS-cloudExtensionAttribute5'?: string;
+  'msDS-cloudExtensionAttribute6'?: string;
+  'msDS-cloudExtensionAttribute7'?: string;
+  'msDS-cloudExtensionAttribute8'?: string;
+  'msDS-cloudExtensionAttribute9'?: string;
+  'msDS-cloudExtensionAttribute10'?: string;
+  'msDS-cloudExtensionAttribute11'?: string;
+  'msDS-cloudExtensionAttribute12'?: string;
 
   /* In our AD: access card (pass) */
-  'msDS-cloudExtensionAttribute13': string;
+  'msDS-cloudExtensionAttribute13'?: string;
 
-  'msDS-cloudExtensionAttribute14': string;
-  'msDS-cloudExtensionAttribute15': string;
-  'msDS-cloudExtensionAttribute16': string;
-  'msDS-cloudExtensionAttribute17': string;
-  'msDS-cloudExtensionAttribute18': string;
-  'msDS-cloudExtensionAttribute19': string;
-  'msDS-cloudExtensionAttribute20': string;
+  'msDS-cloudExtensionAttribute14'?: string;
+  'msDS-cloudExtensionAttribute15'?: string;
+  'msDS-cloudExtensionAttribute16'?: string;
+  'msDS-cloudExtensionAttribute17'?: string;
+  'msDS-cloudExtensionAttribute18'?: string;
+  'msDS-cloudExtensionAttribute19'?: string;
+  'msDS-cloudExtensionAttribute20'?: string;
 }
 
 interface GroupSearchFilterFunction {

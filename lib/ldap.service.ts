@@ -790,7 +790,7 @@ export class LdapService extends EventEmitter {
   }
 
   /**
-   * Authenticate given credentials against LDAP server
+   * Authenticate given credentials against LDAP server (Internal)
    *
    * @async
    * @param {string} username The username to authenticate
@@ -798,30 +798,7 @@ export class LdapService extends EventEmitter {
    * @returns {LdapResponseUser} User in LDAP
    * @throws {Error}
    */
-  public async authenticate(username: string, password: string): Promise<LdapResponseUser> {
-    const cachedID = `user:${username}`;      
-
-    if (typeof password === 'undefined' || password === null || password === '') {
-      this.logger.error('No password given');
-      throw new Error('No password given');
-    }
-
-    if (this.userCache) {
-      // Check cache. 'cached' is `{password: <hashed-password>, user: <user>}`.
-      const cached: LDAPCache = await this.userCache.get<LDAPCache>(cachedID);
-      if (
-        cached &&
-        cached.user &&
-        cached.user.sAMAccountName &&
-        cached.password &&
-        (cached.password === LDAP_PASSWORD_NULL || bcrypt.compareSync(password, cached.password))
-      ) {
-        this.logger.debug(`From cache: ${cached.user.sAMAccountName}`);
-
-        return cached.user as LdapResponseUser;
-      }
-    }
-
+  private async authenticateInternal(username: string, password: string): Promise<LdapResponseUser> {
     // 1. Find the user DN in question.
     const foundUser = await this.findUser(username).catch((error: Error) => {
       this.logger.error(`Not found user: "${username}"`, error);
@@ -848,22 +825,7 @@ export class LdapService extends EventEmitter {
 
           // 3. If requested, fetch user groups
           try {
-            const userWithGroups = ((await this.getGroups(foundUser)) as unknown) as LdapResponseUser;
-
-            if (this.userCache) {
-              this.logger.debug(`To cache: ${userWithGroups.sAMAccountName}`);
-
-              this.userCache.set<LDAPCache>(
-                `user:${userWithGroups.sAMAccountName}`,
-                {
-                  user: userWithGroups,
-                  password: bcrypt.hashSync(password, this.salt),
-                },
-                { ttl: this.ttl },
-              );
-            }
-
-            return resolve(userWithGroups as LdapResponseUser);
+            return resolve(((await this.getGroups(foundUser)) as unknown) as LdapResponseUser);
           } catch (error) {
             this.logger.error(`Authenticate error: ${error.toString()}`, [{ error }]);
 
@@ -872,6 +834,82 @@ export class LdapService extends EventEmitter {
         },
       );
     });
+  }
+
+  /**
+   * Authenticate given credentials against LDAP server
+   *
+   * @async
+   * @param {string} username The username to authenticate
+   * @param {string} password The password to verify
+   * @returns {LdapResponseUser} User in LDAP
+   * @throws {Error}
+   */
+  public async authenticate(username: string, password: string, cache = true): Promise<LdapResponseUser> {
+    if (!password) {
+      this.logger.error('No password given');
+      throw new Error('No password given');
+    }
+
+    const cachedID = `user:${username}`;
+    if (cache && this.userCache) {
+      // Check cache. 'cached' is `{password: <hashed-password>, user: <user>}`.
+      const cached: LDAPCache = await this.userCache.get<LDAPCache>(cachedID);
+      if (
+        cached &&
+        cached.user &&
+        cached.user.sAMAccountName &&
+        cached.password &&
+        (cached.password === LDAP_PASSWORD_NULL || bcrypt.compareSync(password, cached.password))
+      ) {
+        this.logger.debug(`From cache: ${cached.user.sAMAccountName}`);
+
+        (async (): Promise<void> => {
+          try {
+            const user = await this.authenticateInternal(username, password);
+            if (JSON.stringify(user) !== JSON.stringify(cached.user) && this.userCache) {
+              this.logger.debug(`To cache: ${user.sAMAccountName}`);
+
+              this.userCache.set<LDAPCache>(
+                `user:${user.sAMAccountName}`,
+                {
+                  user: user,
+                  password: bcrypt.hashSync(password, this.salt),
+                },
+                { ttl: this.ttl },
+              );
+            }
+          } catch (error) {
+            this.logger.error(`LDAP auth error: ${error.toString()}`);
+          }
+        })();
+
+        return cached.user as LdapResponseUser;
+      }
+    }
+
+    try {
+      const user = await this.authenticateInternal(username, password);
+
+      if (this.userCache) {
+        this.logger.debug(`To cache: ${user.sAMAccountName}`);
+  
+        this.userCache.set<LDAPCache>(
+          `user:${user.sAMAccountName}`,
+          {
+            user: user,
+            password: bcrypt.hashSync(password, this.salt),
+          },
+          { ttl: this.ttl },
+        );
+      }
+
+      return user;
+    } catch (error) {
+      this.logger.error(`LDAP auth error: ${error.toString()}`);
+
+      throw new Error(error);
+    }
   }
 
   /**

@@ -30,6 +30,7 @@ import {
   ldapADattributes,
   LdapResponseGroup,
   LDAPAddEntry,
+  LoggerContext,
 } from './ldap.interface';
 import { Change } from './ldap/change';
 //#endregion
@@ -511,14 +512,14 @@ export class LdapService extends EventEmitter {
    * @param {string} userByUsername user name
    * @returns {Promise<LdapResponseUser>} User in LDAP
    */
-  public async searchByUsername({ userByUsername, cache = true }: { userByUsername: string, cache?: boolean }): Promise<LdapResponseUser> {
+  public async searchByUsername({ userByUsername, cache = true, context }: { userByUsername: string, cache?: boolean; context?: LoggerContext }): Promise<LdapResponseUser> {
     const cachedID = `user:${userByUsername}`;
 
     if (cache && this.userCache) {
       // Check cache. 'cached' is `{password: <hashed-password>, user: <user>}`.
       const cached: LDAPCache = await this.userCache.get<LDAPCache>(cachedID);
       if (cached && cached.user && cached.user.sAMAccountName) {
-        this.logger.debug(`From cache: ${cached.user.sAMAccountName}`, { context: LdapService.name });
+        this.logger.debug(`From cache: ${cached.user.sAMAccountName}`, { context: LdapService.name, ...context });
 
         return cached.user as LdapResponseUser;
       }
@@ -529,11 +530,11 @@ export class LdapService extends EventEmitter {
         const user = (search as unknown) as LdapResponseUser;
 
         if (user && this.userCache) {
-          this.logger.debug(`To cache: ${user.dn}`, { context: LdapService.name });
+          this.logger.debug(`To cache: ${user.dn}`, { context: LdapService.name, ...context });
           this.userCache.set<LDAPCache>(`dn:${user.dn}`, { user, password: LDAP_PASSWORD_NULL }, { ttl: this.ttl });
 
           if (user.sAMAccountName) {
-            this.logger.debug(`To cache: ${user.sAMAccountName}`, { context: LdapService.name });
+            this.logger.debug(`To cache: ${user.sAMAccountName}`, { context: LdapService.name, ...context });
             this.userCache.set<LDAPCache>(`user:${user.sAMAccountName}`, { user, password: LDAP_PASSWORD_NULL }, { ttl: this.ttl });
           }
         }
@@ -541,7 +542,7 @@ export class LdapService extends EventEmitter {
         return user;
       })
       .catch((error: Error) => {
-        this.logger.error(`Search by Username error: ${error.toString()}`, { error, context: LdapService.name });
+        this.logger.error(`Search by Username error: ${error.toString()}`, { error, context: LdapService.name, ...context });
 
         throw error;
       });
@@ -554,13 +555,13 @@ export class LdapService extends EventEmitter {
    * @param {string} userByDN user distinguished name
    * @returns {Promise<LdapResponseUser>} User in LDAP
    */
-  public async searchByDN({ userByDN, cache = true }: { userByDN: string; cache?: boolean; }): Promise<LdapResponseUser> {
+  public async searchByDN({ userByDN, cache = true, context }: { userByDN: string; cache?: boolean; context?: LoggerContext }): Promise<LdapResponseUser> {
     const cachedID = `dn:${userByDN}`;
     if (cache && this.userCache) {
       // Check cache. 'cached' is `{password: <hashed-password>, user: <user>}`.
       const cached: LDAPCache = await this.userCache.get<LDAPCache>(cachedID);
       if (cached && cached.user && cached.user.sAMAccountName) {
-        this.logger.debug(`From cache: ${cached.user.sAMAccountName}`, { context: LdapService.name });
+        this.logger.debug(`From cache: ${cached.user.sAMAccountName}`, { context: LdapService.name, ...context });
 
         return cached.user as LdapResponseUser;
       }
@@ -596,11 +597,11 @@ export class LdapService extends EventEmitter {
       )
       .then((user) => {
         if (user && this.userCache) {
-          this.logger.debug(`To cache: ${userByDN}`, { context: LdapService.name });
+          this.logger.debug(`To cache: ${userByDN}`, { context: LdapService.name, ...context });
           this.userCache.set<LDAPCache>(cachedID, { user, password: LDAP_PASSWORD_NULL }, { ttl: this.ttl });
 
           if (user.sAMAccountName) {
-            this.logger.debug(`To cache: ${user.sAMAccountName}`, { context: LdapService.name });
+            this.logger.debug(`To cache: ${user.sAMAccountName}`, { context: LdapService.name, ...context });
             this.userCache.set<LDAPCache>(`user:${user.sAMAccountName}`, { user, password: LDAP_PASSWORD_NULL }, { ttl: this.ttl });
           }
         }
@@ -609,9 +610,9 @@ export class LdapService extends EventEmitter {
       })
       .catch((error: Error | Ldap.NoSuchObjectError) => {
         if (error instanceof Ldap.NoSuchObjectError) {
-          this.logger.error(`Not found error: ${error.toString()}`, { error, context: LdapService.name });
+          this.logger.error(`Not found error: ${error.toString()}`, { error, context: LdapService.name, ...context });
         } else {
-          this.logger.error(`Search by DN error: ${error.toString()}`, { error, context: LdapService.name });
+          this.logger.error(`Search by DN error: ${error.toString()}`, { error, context: LdapService.name, ...context });
         }
 
         throw error;
@@ -702,7 +703,7 @@ export class LdapService extends EventEmitter {
    * @returns {boolean} The result
    * @throws {Ldap.Error}
    */
-  public async modify({ dn, data, username, password, request }: { dn: string; data: Change[]; username?: string; password?: string; request?: Record<string, unknown>}): Promise<boolean> {
+  public async modify({ dn, data, username, password, context }: { dn: string; data: Change[]; username?: string; password?: string; context?: LoggerContext}): Promise<boolean> {
     return this.adminBind().then(
       () =>
         new Promise<boolean>((resolve, reject) => {
@@ -717,7 +718,7 @@ export class LdapService extends EventEmitter {
               });
 
               if (error) {
-                this.logger.error(`bind error: ${error.toString()}`, { error, context: LdapService.name, username: (request?.user as Record<string, string>)?.username });
+                this.logger.error(`bind error: ${error.toString()}`, { error, context: LdapService.name, ...context });
 
                 return reject(error);
               }
@@ -727,20 +728,20 @@ export class LdapService extends EventEmitter {
                 data,
                 async (searchError: Ldap.Error | null): Promise<void> => {
                   if (searchError) {
-                    this.logger.error(`Modify error "${dn}": ${searchError.toString()}`, { error: searchError, context: LdapService.name, username: (request?.user as Record<string, string>)?.username });
+                    this.logger.error(`Modify error "${dn}": ${searchError.toString()}`, { error: searchError, context: LdapService.name, ...context });
 
                     reject(searchError);
                   }
 
-                  this.logger.info(`Modify success "${dn}"`, { context: LdapService.name, username: (request?.user as Record<string, string>)?.username });
+                  this.logger.info(`Modify success "${dn}"`, { context: LdapService.name, ...context });
 
                   if (this.userCache) {
                     await this.userCache.del(dn);
-                    this.logger.debug(`Modify: cache reset: ${dn}`, { context: LdapService.name, username: (request?.user as Record<string, string>)?.username });
+                    this.logger.debug(`Modify: cache reset: ${dn}`, { context: LdapService.name, ...context });
 
                     if (username) {
                       await this.userCache.del(username);
-                      this.logger.debug(`Modify: cache reset: ${username}`, { context: LdapService.name, username: (request?.user as Record<string, string>)?.username });
+                      this.logger.debug(`Modify: cache reset: ${username}`, { context: LdapService.name, ...context });
                     }
                   }
 
@@ -761,21 +762,21 @@ export class LdapService extends EventEmitter {
                 });
 
                 if (searchError) {
-                  this.logger.error(`Modify error "${dn}": ${searchError.toString()}`, { error: searchError, context: LdapService.name, username: (request?.user as Record<string, string>)?.username });
+                  this.logger.error(`Modify error "${dn}": ${searchError.toString()}`, { error: searchError, context: LdapService.name, ...context });
 
                   reject(searchError);
                   return;
                 }
 
-                this.logger.info(`Modify success "${dn}": ${JSON.stringify(data)}`, { context: LdapService.name, username: (request?.user as Record<string, string>)?.username });
+                this.logger.info(`Modify success "${dn}": ${JSON.stringify(data)}`, { context: LdapService.name, ...context });
 
                 if (this.userCache) {
                   await this.userCache.del(dn);
-                  this.logger.debug(`Modify: cache reset: ${dn}`, { context: LdapService.name, username: (request?.user as Record<string, string>)?.username });
+                  this.logger.debug(`Modify: cache reset: ${dn}`, { context: LdapService.name, ...context });
 
                   if (username) {
                     await this.userCache.del(username);
-                    this.logger.debug(`Modify: cache reset: ${username}`, { context: LdapService.name, username: (request?.user as Record<string, string>)?.username });
+                    this.logger.debug(`Modify: cache reset: ${username}`, { context: LdapService.name, ...context });
                   }
                 }
 
@@ -796,15 +797,15 @@ export class LdapService extends EventEmitter {
    * @returns {LdapResponseUser} User in LDAP
    * @throws {Error}
    */
-  private async authenticateInternal({ username, password, request }: { username: string; password: string; request?: Record<string, unknown> }): Promise<LdapResponseUser> {
+  private async authenticateInternal({ username, password, context }: { username: string; password: string; context?: LoggerContext }): Promise<LdapResponseUser> {
     // 1. Find the user DN in question.
     const foundUser = await this.findUser(username).catch((error: Error) => {
-      this.logger.error(`Not found user: "${username}"`, { error, context: LdapService.name, username: (request?.user as Record<string, string>)?.username });
+      this.logger.error(`Not found user: "${username}"`, { error, context: LdapService.name, ...context });
 
       throw error;
     });
     if (!foundUser) {
-      this.logger.error(`Not found user: "${username}"`, { error: 'Not found user', context: LdapService.name, username: (request?.user as Record<string, string>)?.username });
+      this.logger.error(`Not found user: "${username}"`, { error: 'Not found user', context: LdapService.name, ...context });
 
       throw new Error(`Not found user: "${username}"`);
     }
@@ -816,7 +817,7 @@ export class LdapService extends EventEmitter {
         password,
         async (bindError): Promise<unknown | LdapResponseUser> => {
           if (bindError) {
-            this.logger.error(`bind error: ${bindError.toString()}`, { error: bindError, context: LdapService.name, username: (request?.user as Record<string, string>)?.username });
+            this.logger.error(`bind error: ${bindError.toString()}`, { error: bindError, context: LdapService.name, ...context });
 
             return reject(bindError);
           }
@@ -825,7 +826,7 @@ export class LdapService extends EventEmitter {
           try {
             return resolve(((await this.getGroups(foundUser)) as unknown) as LdapResponseUser);
           } catch (error) {
-            this.logger.error(`Authenticate error: ${error.toString()}`, { error, context: LdapService.name, username: (request?.user as Record<string, string>)?.username });
+            this.logger.error(`Authenticate error: ${error.toString()}`, { error, context: LdapService.name, ...context });
 
             return reject(error);
           }
@@ -843,9 +844,9 @@ export class LdapService extends EventEmitter {
    * @returns {LdapResponseUser} User in LDAP
    * @throws {Error}
    */
-  public async authenticate({ username, password, cache = true, request }: { username: string, password: string, cache?: boolean; request?: Record<string, unknown> }): Promise<LdapResponseUser> {
+  public async authenticate({ username, password, cache = true, context }: { username: string, password: string, cache?: boolean; context?: LoggerContext }): Promise<LdapResponseUser> {
     if (!password) {
-      this.logger.error('No password given', { error: 'No password given', context: LdapService.name, username: (request?.user as Record<string, string>)?.username });
+      this.logger.error('No password given', { error: 'No password given', context: LdapService.name, ...context });
       throw new Error('No password given');
     }
 
@@ -860,13 +861,13 @@ export class LdapService extends EventEmitter {
         cached.password &&
         (cached.password === LDAP_PASSWORD_NULL || bcrypt.compareSync(password, cached.password))
       ) {
-        this.logger.debug(`From cache: ${cached.user.sAMAccountName}`, { context: LdapService.name, username: (request?.user as Record<string, string>)?.username });
+        this.logger.debug(`From cache: ${cached.user.sAMAccountName}`, { context: LdapService.name, ...context });
 
         (async (): Promise<void> => {
           try {
-            const user = await this.authenticateInternal({ username, password, request });
+            const user = await this.authenticateInternal({ username, password, context });
             if (JSON.stringify(user) !== JSON.stringify(cached.user) && this.userCache) {
-              this.logger.debug(`To cache: ${user.sAMAccountName}`, { context: LdapService.name, username: (request?.user as Record<string, string>)?.username });
+              this.logger.debug(`To cache: ${user.sAMAccountName}`, { context: LdapService.name, ...context });
 
               this.userCache.set<LDAPCache>(
                 `user:${user.sAMAccountName}`,
@@ -878,7 +879,7 @@ export class LdapService extends EventEmitter {
               );
             }
           } catch (error) {
-            this.logger.error(`LDAP auth error: ${error.toString()}`, { error, context: LdapService.name, username: (request?.user as Record<string, string>)?.username });
+            this.logger.error(`LDAP auth error: ${error.toString()}`, { error, context: LdapService.name, ...context });
           }
         })();
 
@@ -887,10 +888,10 @@ export class LdapService extends EventEmitter {
     }
 
     try {
-      const user = await this.authenticateInternal({ username, password, request });
+      const user = await this.authenticateInternal({ username, password, context });
 
       if (this.userCache) {
-        this.logger.debug(`To cache: ${user.sAMAccountName}`, { context: LdapService.name, username: (request?.user as Record<string, string>)?.username });
+        this.logger.debug(`To cache: ${user.sAMAccountName}`, { context: LdapService.name, ...context });
   
         this.userCache.set<LDAPCache>(
           `user:${user.sAMAccountName}`,
@@ -904,7 +905,7 @@ export class LdapService extends EventEmitter {
 
       return user;
     } catch (error) {
-      this.logger.error(`LDAP auth error: ${error.toString()}`, { error, context: LdapService.name, username: (request?.user as Record<string, string>)?.username });
+      this.logger.error(`LDAP auth error: ${error.toString()}`, { error, context: LdapService.name, ...context });
 
       throw error;
     }
@@ -918,7 +919,7 @@ export class LdapService extends EventEmitter {
    * @returns {LdapResponseUser} User | Profile in LDAP
    * @throws {Error}
    */
-  public async add({ entry, request }: { entry: LDAPAddEntry; request?: Record<string, unknown> }): Promise<LdapResponseUser> {
+  public async add({ entry, context }: { entry: LDAPAddEntry; context?: LoggerContext }): Promise<LdapResponseUser> {
     return this.adminBind().then(
       () =>
         new Promise<LdapResponseUser>((resolve, reject) => {

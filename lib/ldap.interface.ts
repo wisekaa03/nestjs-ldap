@@ -12,6 +12,10 @@ export const LDAP_OPTIONS = 'LDAP_OPTIONS';
 
 export type Scope = 'base' | 'one' | 'sub';
 
+export interface LoggerContext {
+  [key: string]: string;
+}
+
 export interface LDAPCache {
   user: LdapResponseUser;
   password: string;

@@ -138,7 +138,7 @@ export class LdapService extends EventEmitter {
 
     if (options.reconnect) {
       this.once('installReconnectListener', () => {
-        this.logger.info('install reconnect listener', { context: LdapService.name });
+        this.logger.debug('install reconnect listener', { context: LdapService.name });
         this.adminClient.on('connect', () => this.onConnectAdmin());
       });
     }
@@ -260,7 +260,7 @@ export class LdapService extends EventEmitter {
       throw new Error('bindDN is undefined');
     }
 
-    this.logger.info(`bind: ${this.bindDN} ...`, { context: LdapService.name });
+    this.logger.debug(`bind: ${this.bindDN} ...`, { context: LdapService.name });
 
     return new Promise<boolean>((resolve, reject) =>
       this.adminClient.bind(this.bindDN, this.bindCredentials, (error) => {
@@ -271,7 +271,7 @@ export class LdapService extends EventEmitter {
           return reject(error);
         }
 
-        this.logger.info('bind ok', { context: LdapService.name });
+        this.logger.debug('bind ok', { context: LdapService.name });
         this.adminBound = true;
         if (this.options.reconnect) {
           this.emit('installReconnectListener');
@@ -721,7 +721,7 @@ export class LdapService extends EventEmitter {
                     reject(searchError);
                   }
 
-                  this.logger.info(`Modify success "${dn}"`, { context: LdapService.name, ...loggerContext });
+                  this.logger.debug(`Modify success "${dn}"`, { context: LdapService.name, ...loggerContext });
 
                   if (this.userCache) {
                     await this.userCache.del(dn);
@@ -756,7 +756,7 @@ export class LdapService extends EventEmitter {
                   return;
                 }
 
-                this.logger.info(`Modify success "${dn}": ${JSON.stringify(data)}`, { context: LdapService.name, ...loggerContext });
+                this.logger.debug(`Modify success "${dn}": ${JSON.stringify(data)}`, { context: LdapService.name, ...loggerContext });
 
                 if (this.userCache) {
                   await this.userCache.del(dn);
@@ -938,10 +938,10 @@ export class LdapService extends EventEmitter {
     // client has been bound (e.g. how ldapjs pool destroy does)
     return new Promise<boolean>((resolve) => {
       this.adminClient.unbind(() => {
-        this.logger.info('adminClient: close', { context: LdapService.name });
+        this.logger.debug('adminClient: close', { context: LdapService.name });
 
         this.userClient.unbind(() => {
-          this.logger.info('userClient: close', { context: LdapService.name });
+          this.logger.debug('userClient: close', { context: LdapService.name });
 
           resolve(true);
         });

@@ -89,19 +89,17 @@ export class LdapService extends EventEmitter {
           [ username, password ] = redisArray.auth.split(':');
         }
 
-        if (this.userCacheStore) {
-          this.userCache = CacheManager.caching({
-            store: RedisStore,
-            host: redisArray.hostname,
-            port: redisArray.port || '6379',
-            username,
-            password,
-            db,
-            keyPrefix: 'LDAP:',
-            ttl: this.ttl,
-          });
-          this.logger.debug('Redis connection: success', { context: LdapService.name });
-        }
+        this.userCache = CacheManager.caching({
+          store: RedisStore,
+          host: redisArray.hostname,
+          port: redisArray.port || '6379',
+          username,
+          password,
+          db,
+          keyPrefix: 'LDAP:',
+          ttl: this.ttl,
+        });
+        this.logger.debug('Redis connection: success', { context: LdapService.name });
       }
     } else {
       this.salt = '';

@@ -9,7 +9,7 @@ import Ldap from 'ldapjs';
 import { EventEmitter } from 'events';
 import CacheManager from 'cache-manager';
 import RedisStore from 'cache-manager-ioredis';
-import Redis from 'ioredis';
+import { parse as urlLibParse } from "url";
 import bcrypt from 'bcrypt';
 export {
   InsufficientAccessRightsError,
@@ -80,19 +80,29 @@ export class LdapService extends EventEmitter {
       this.ttl = options.cacheTtl || 600;
       this.salt = bcrypt.genSaltSync(6);
 
-      // A string used to prefix all used keys (e.g. namespace:test).
-      // Please be aware that the keys command will not be prefixed.
-      this.userCacheStore = new Redis(`${options.cacheUrl}&keyPrefix=LDAP:`);
+      const redisArray = urlLibParse(options.cacheUrl);
+      if (redisArray && (redisArray.protocol === 'redis' || redisArray.protocol === 'rediss')) {
+        let username: string | undefined;
+        let password: string | undefined;
+        const db = redisArray.pathname?.slice(1);
+        if (redisArray.auth) {
+          [ username, password ] = redisArray.auth.split(':');
+        }
 
-      if (this.userCacheStore) {
-        this.userCache = CacheManager.caching({
-          store: RedisStore,
-          redisInstance: this.userCacheStore,
-          ttl: this.ttl,
-        });
-        this.logger.debug('Redis connection: success', { context: LdapService.name });
+        if (this.userCacheStore) {
+          this.userCache = CacheManager.caching({
+            store: RedisStore,
+            host: redisArray.host,
+            port: redisArray.port || '6379',
+            username,
+            password,
+            db,
+            keyPrefix: 'LDAP:',
+            ttl: this.ttl,
+          });
+          this.logger.debug('Redis connection: success', { context: LdapService.name });
+        }
       }
-
     } else {
       this.salt = '';
       this.ttl = 60;

@@ -28,6 +28,7 @@
     "cache-manager-ioredis": "*",
     "ldapjs": "^2",
     "nest-winston": "^1",
+    "url": "^0.11",
     "winston": "^3"
   },
   "devDependencies": {

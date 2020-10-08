@@ -54,8 +54,6 @@ export class LdapService extends EventEmitter {
 
   private getGroups: ({ user, loggerContext }: { user: Ldap.SearchEntryObject, loggerContext?: LoggerContext }) => Promise<Ldap.SearchEntryObject>;
 
-  private userCacheStore?: CacheManager.Store;
-
   private userCache?: CacheManager.Cache;
 
   private salt: string;
@@ -99,9 +97,13 @@ export class LdapService extends EventEmitter {
           keyPrefix: 'LDAP:',
           ttl: this.ttl,
         });
-        this.logger.debug('Redis connection: success', { context: LdapService.name });
       }
-    } else {
+      if (this.userCache?.store) {
+        this.logger.debug('Redis connection: success.', { context: LdapService.name });
+      } else {
+        this.logger.error('Redis connection: some error.', { context: LdapService.name });
+      }
+  } else {
       this.salt = '';
       this.ttl = 60;
     }

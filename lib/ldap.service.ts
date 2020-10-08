@@ -92,7 +92,7 @@ export class LdapService extends EventEmitter {
         if (this.userCacheStore) {
           this.userCache = CacheManager.caching({
             store: RedisStore,
-            host: redisArray.host,
+            host: redisArray.hostname,
             port: redisArray.port || '6379',
             username,
             password,

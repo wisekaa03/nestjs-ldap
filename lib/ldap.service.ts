@@ -51,7 +51,7 @@ export class LdapService extends EventEmitter {
 
   private userClient: Ldap.Client;
 
-  private getGroups: (user: Ldap.SearchEntryObject) => Promise<Ldap.SearchEntryObject>;
+  private getGroups: ({ user, loggerContext }: { user: Ldap.SearchEntryObject, loggerContext?: LoggerContext }) => Promise<Ldap.SearchEntryObject>;
 
   private userCacheStore?: CacheManager.Store;
 
@@ -178,7 +178,7 @@ export class LdapService extends EventEmitter {
     } else {
       // Assign an async identity function so there is no need to branch
       // the authenticate function to have cache set up.
-      this.getGroups = async (user) => user;
+      this.getGroups = async ({ user }) => user;
     }
   }
 
@@ -412,7 +412,7 @@ export class LdapService extends EventEmitter {
    * @returns {undefined} If user is not found but no error happened, result is undefined.
    * @throws {Error}
    */
-  private async findUser(username: string, cache = true): Promise<undefined | Ldap.SearchEntryObject> {
+  private async findUser({ username, cache = true, loggerContext }: { username: string, cache?: boolean, loggerContext?: LoggerContext }): Promise<undefined | Ldap.SearchEntryObject> {
     if (!username) {
       throw new Error('empty username');
     }
@@ -421,7 +421,7 @@ export class LdapService extends EventEmitter {
       // Check cache. 'cached' is `{user: <user>}`.
       const cached: LDAPCache = await this.userCache.get<LDAPCache>(username);
       if (cached && cached.user && cached.user.sAMAccountName) {
-        this.logger.debug(`From cache: ${cached.user.sAMAccountName}`, { context: LdapService.name });
+        this.logger.debug(`From cache: ${cached.user.sAMAccountName}`, { context: LdapService.name, ...loggerContext });
 
         return (cached.user as unknown) as Ldap.SearchEntryObject;
       }
@@ -458,7 +458,7 @@ export class LdapService extends EventEmitter {
           }),
       )
       .catch((error: Error) => {
-        this.logger.error(`user search error: ${error.toString()}`, { error, context: LdapService.name });
+        this.logger.error(`user search error: ${error.toString()}`, { error, context: LdapService.name, ...loggerContext });
 
         throw error;
       });
@@ -471,7 +471,7 @@ export class LdapService extends EventEmitter {
    * @param {Ldap.SearchEntryObject} user The LDAP user object
    * @returns {Promise<Ldap.SearchEntryObject>} Result handling callback
    */
-  private async findGroups(user: Ldap.SearchEntryObject): Promise<Ldap.SearchEntryObject> {
+  private async findGroups({ user, loggerContext }: { user: Ldap.SearchEntryObject, loggerContext?: LoggerContext }): Promise<Ldap.SearchEntryObject> {
     if (!user) {
       throw new Error('no user');
     }
@@ -499,7 +499,7 @@ export class LdapService extends EventEmitter {
         return user;
       })
       .catch((error: Error) => {
-        this.logger.error(`group search error: ${error.toString()}`, { error, context: LdapService.name });
+        this.logger.error(`group search error: ${error.toString()}`, { error, context: LdapService.name, ...loggerContext });
 
         throw error;
       });
@@ -525,7 +525,7 @@ export class LdapService extends EventEmitter {
       }
     }
 
-    return this.findUser(userByUsername)
+    return this.findUser({ username: userByUsername, loggerContext })
       .then((search) => {
         const user = (search as unknown) as LdapResponseUser;
 
@@ -626,7 +626,7 @@ export class LdapService extends EventEmitter {
    * @returns {LdapResponseUser[]} User in LDAP
    * @throws {Error}
    */
-  public async synchronization(): Promise<LdapResponseUser[]> {
+  public async synchronization({ loggerContext }: { loggerContext?: LoggerContext }): Promise<LdapResponseUser[]> {
     const options = {
       filter: this.options.searchFilterAllUsers,
       scope: this.options.searchScopeAllUsers,
@@ -641,16 +641,16 @@ export class LdapService extends EventEmitter {
     return this.search(this.options.searchBase, options)
       .then(async (sync) => {
         if (sync) {
-          await Promise.allSettled(sync.map(async (u) => await this.getGroups(u)));
+          await Promise.allSettled(sync.map(async (u) => await this.getGroups({ user: u, loggerContext })));
 
           return (sync as unknown) as LdapResponseUser[];
         }
 
-        this.logger.error('Synchronize unknown error.', { error: 'Unknown', context: LdapService.name });
+        this.logger.error('Synchronize unknown error.', { error: 'Unknown', context: LdapService.name, ...loggerContext });
         throw new Error('Synchronize unknown error.');
       })
       .catch((error: Error | Ldap.Error) => {
-        this.logger.error(`Synchronize error: ${error.toString()}`, { error, context: LdapService.name });
+        this.logger.error(`Synchronize error: ${error.toString()}`, { error, context: LdapService.name, ...loggerContext });
 
         throw error;
       });
@@ -663,7 +663,7 @@ export class LdapService extends EventEmitter {
    * @returns {LdapResponseGroup[]} Group in LDAP
    * @throws {Error}
    */
-  public async synchronizationGroups(): Promise<LdapResponseGroup[]> {
+  public async synchronizationGroups({ loggerContext }: { loggerContext?: LoggerContext }): Promise<LdapResponseGroup[]> {
     const options = {
       filter: this.options.searchFilterAllGroups,
       scope: this.options.groupSearchScope,
@@ -681,11 +681,11 @@ export class LdapService extends EventEmitter {
           return (sync as unknown) as LdapResponseGroup[];
         }
 
-        this.logger.error('synchronizationGroups: unknown error.', { error: 'Unknown', context: LdapService.name });
+        this.logger.error('synchronizationGroups: unknown error.', { error: 'Unknown', context: LdapService.name, ...loggerContext });
         throw new Error('synchronizationGroups: unknown error.');
       })
       .catch((error: Error) => {
-        this.logger.error(`synchronizationGroups error: ${error.toString()}`, { error, context: LdapService.name });
+        this.logger.error(`synchronizationGroups error: ${error.toString()}`, { error, context: LdapService.name, ...loggerContext });
 
         throw error;
       });
@@ -799,7 +799,7 @@ export class LdapService extends EventEmitter {
    */
   private async authenticateInternal({ username, password, loggerContext }: { username: string; password: string; loggerContext?: LoggerContext }): Promise<LdapResponseUser> {
     // 1. Find the user DN in question.
-    const foundUser = await this.findUser(username).catch((error: Error) => {
+    const foundUser = await this.findUser({ username, loggerContext }).catch((error: Error) => {
       this.logger.error(`Not found user: "${username}"`, { error, context: LdapService.name, ...loggerContext });
 
       throw error;
@@ -824,7 +824,7 @@ export class LdapService extends EventEmitter {
 
           // 3. If requested, fetch user groups
           try {
-            return resolve(((await this.getGroups(foundUser)) as unknown) as LdapResponseUser);
+            return resolve(((await this.getGroups({ user: foundUser, loggerContext })) as unknown) as LdapResponseUser);
           } catch (error) {
             this.logger.error(`Authenticate error: ${error.toString()}`, { error, context: LdapService.name, ...loggerContext });
 

@@ -81,7 +81,7 @@ export class LdapService extends EventEmitter {
       this.salt = bcrypt.genSaltSync(6);
 
       const redisArray = urlLibParse(options.cacheUrl);
-      if (redisArray && (redisArray.protocol === 'redis' || redisArray.protocol === 'rediss')) {
+      if (redisArray && (redisArray.protocol === 'redis:' || redisArray.protocol === 'rediss:')) {
         let username: string | undefined;
         let password: string | undefined;
         const db = redisArray.pathname?.slice(1);

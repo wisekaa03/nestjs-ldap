@@ -1,6 +1,6 @@
 {
   "name": "nestjs-ldap",
-  "version": "1.1.2",
+  "version": "1.2.0",
   "description": "NestJS library to access LDAP",
   "author": "Stanislav V Vyaliy",
   "license": "MIT",
@@ -19,12 +19,13 @@
     "lint": "node ./node_modules/eslint/bin/eslint.js lib/**"
   },
   "resolutions": {
+    "**/**/redis-commands": "^1",
     "**/**/rimraf": "^3"
   },
   "dependencies": {
     "bcrypt": "*",
     "cache-manager": "^3",
-    "cache-manager-redis-store": "^2",
+    "cache-manager-ioredis": "*",
     "ldapjs": "^2",
     "nest-winston": "^1",
     "winston": "^3"
@@ -34,6 +35,7 @@
     "@types/asn1": "*",
     "@types/bcrypt": "*",
     "@types/cache-manager": "*",
+    "@types/cache-manager-ioredis": "*",
     "@types/ldapjs": "*",
     "@types/node": "*",
     "@typescript-eslint/eslint-plugin": "^4",

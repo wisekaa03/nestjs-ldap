@@ -7,8 +7,9 @@ import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { Logger } from 'winston';
 import Ldap from 'ldapjs';
 import { EventEmitter } from 'events';
-import * as CacheManager from 'cache-manager';
-import * as RedisStore from 'cache-manager-redis-store';
+import CacheManager from 'cache-manager';
+import RedisStore from 'cache-manager-ioredis';
+import Redis from 'ioredis';
 import bcrypt from 'bcrypt';
 export {
   InsufficientAccessRightsError,
@@ -79,38 +80,15 @@ export class LdapService extends EventEmitter {
       this.ttl = options.cacheTtl || 600;
       this.salt = bcrypt.genSaltSync(6);
 
-      this.userCacheStore = RedisStore.create({
-        // A string used to prefix all used keys (e.g. namespace:test).
-        // Please be aware that the keys command will not be prefixed.
-        prefix: 'LDAP:',
-        url: options.cacheUrl, // IP address of the Redis server
-        // If set, client will run Redis auth command on connect.
-        // path - The UNIX socket string of the Redis server
-        // url - The URL of the Redis server.
-        // string_numbers
-        // return_buffers
-        // detect_buffers
-        // socket_keepalive
-        // socket_initialdelay
-        // no_ready_check
-        // enable_offline_queue
-        // retry_max_delay
-        // connect_timeout
-        // max_attempts
-        // retry_unfulfilled_commands
-        // family - IPv4
-        // disable_resubscribing
-        // rename_commands
-        // tls
-        // prefix
-        // retry_strategy
-      });
+      // A string used to prefix all used keys (e.g. namespace:test).
+      // Please be aware that the keys command will not be prefixed.
+      this.userCacheStore = new Redis(`${options.cacheUrl}&keyPrefix=LDAP:`);
 
       if (this.userCacheStore) {
         this.userCache = CacheManager.caching({
-          store: this.userCacheStore,
+          store: RedisStore,
+          redisInstance: this.userCacheStore,
           ttl: this.ttl,
-          // max: configService.get<number>('LDAP_REDIS_MAX'),
         });
         this.logger.debug('Redis connection: success', { context: LdapService.name });
       }

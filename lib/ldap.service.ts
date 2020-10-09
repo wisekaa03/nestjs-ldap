@@ -74,29 +74,38 @@ export class LdapService extends EventEmitter {
   ) {
     super();
 
-    if (options.cacheUrl) {
+    if (options.cacheUrl || options.cache) {
       this.ttl = options.cacheTtl || 600;
       this.salt = bcrypt.genSaltSync(6);
 
-      const redisArray = urlLibParse(options.cacheUrl);
-      if (redisArray && (redisArray.protocol === 'redis:' || redisArray.protocol === 'rediss:')) {
-        let username: string | undefined;
-        let password: string | undefined;
-        const db = redisArray.pathname?.slice(1);
-        if (redisArray.auth) {
-          [ username, password ] = redisArray.auth.split(':');
-        }
-
+      if (options.cache) {
         this.userCache = CacheManager.caching({
           store: RedisStore,
-          host: redisArray.hostname,
-          port: redisArray.port || '6379',
-          username,
-          password,
-          db,
+          redisInstance: options.cache,
           keyPrefix: 'LDAP:',
           ttl: this.ttl,
         });
+      } else if (options.cacheUrl) {
+        const redisArray = urlLibParse(options.cacheUrl);
+        if (redisArray && (redisArray.protocol === 'redis:' || redisArray.protocol === 'rediss:')) {
+          let username: string | undefined;
+          let password: string | undefined;
+          const db = parseInt(redisArray.pathname?.slice(1) || '0', 10);
+          if (redisArray.auth) {
+            [ username, password ] = redisArray.auth.split(':');
+          }
+
+          this.userCache = CacheManager.caching({
+            store: RedisStore,
+            host: redisArray.hostname,
+            port: parseInt(redisArray.port || '6379', 10),
+            username,
+            password,
+            db,
+            keyPrefix: 'LDAP:',
+            ttl: this.ttl,
+          });
+        }
       }
       if (this.userCache?.store) {
         this.logger.debug('Redis connection: success.', { context: LdapService.name });

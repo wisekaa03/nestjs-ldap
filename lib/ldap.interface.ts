@@ -5,6 +5,7 @@
 import { Logger } from '@nestjs/common';
 import { ModuleMetadata, Type } from '@nestjs/common/interfaces';
 import { ClientOptions, SearchEntryObject } from 'ldapjs';
+import type { Redis } from 'ioredis';
 //#endregion
 
 export const LDAP_SYNC = 'LDAP_SYNC';
@@ -408,6 +409,7 @@ export interface LdapModuleOptions extends ClientOptions {
    * If true, then up to 100 credentials at a time will be cached for
    * 5 minutes.
    */
+  cache?: Redis;
   cacheUrl?: string;
   cacheTtl?: number;
 

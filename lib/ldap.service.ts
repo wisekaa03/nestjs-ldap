@@ -148,7 +148,7 @@ export class LdapService extends EventEmitter {
     if (options.reconnect) {
       this.once('installReconnectListener', () => {
         this.logger.debug('install reconnect listener', { context: LdapService.name, function: 'constructor' });
-        this.adminClient.on('connect', () => this.onConnectAdmin());
+        this.adminClient.on('connect', () => this.onConnectAdmin({}));
       });
     }
 
@@ -261,7 +261,7 @@ export class LdapService extends EventEmitter {
    * @async
    * @returns {boolean | Error}
    */
-  private async onConnectAdmin(): Promise<boolean> {
+  private async onConnectAdmin({ loggerContext }: { loggerContext?: LoggerContext }): Promise<boolean> {
     // Anonymous binding
     if (typeof this.bindDN === 'undefined' || this.bindDN === null) {
       this.adminBound = false;
@@ -269,18 +269,18 @@ export class LdapService extends EventEmitter {
       throw new Error('bindDN is undefined');
     }
 
-    this.logger.debug(`bind: ${this.bindDN} ...`, { context: LdapService.name, function: 'onConnectAdmin' });
+    this.logger.debug(`bind: ${this.bindDN} ...`, { context: LdapService.name, function: 'onConnectAdmin', ...loggerContext });
 
     return new Promise<boolean>((resolve, reject) =>
       this.adminClient.bind(this.bindDN, this.bindCredentials, (error) => {
         if (error) {
-          this.logger.error(`bind error: ${error.toString()}`, { error, context: LdapService.name, function: 'onConnectAdmin' });
+          this.logger.error(`bind error: ${error.toString()}`, { error, context: LdapService.name, function: 'onConnectAdmin', ...loggerContext });
           this.adminBound = false;
 
           return reject(error);
         }
 
-        this.logger.debug('bind ok', { context: LdapService.name, function: 'onConnectAdmin' });
+        this.logger.debug('bind ok', { context: LdapService.name, function: 'onConnectAdmin', ...loggerContext });
         this.adminBound = true;
         if (this.options.reconnect) {
           this.emit('installReconnectListener');
@@ -298,7 +298,8 @@ export class LdapService extends EventEmitter {
    * @async
    * @returns {boolean | Error}
    */
-  private adminBind = async (): Promise<boolean> => (this.adminBound ? true : this.onConnectAdmin());
+  private adminBind = async ({ loggerContext }: { loggerContext?: LoggerContext }): Promise<boolean> =>
+    (this.adminBound ? true : this.onConnectAdmin({ loggerContext }));
 
   /**
    * Conduct a search using the admin client. Used for fetching both
@@ -314,8 +315,9 @@ export class LdapService extends EventEmitter {
    * @returns {undefined | Ldap.SearchEntryObject[]}
    * @throws {Error}
    */
-  private async search(searchBase: string, options: Ldap.SearchOptions): Promise<undefined | Ldap.SearchEntryObject[]> {
-    return this.adminBind().then(
+  private async search({ searchBase, options, loggerContext }: { searchBase: string, options: Ldap.SearchOptions, loggerContext?: LoggerContext }):
+    Promise<undefined | Ldap.SearchEntryObject[]> {
+    return this.adminBind({ loggerContext }).then(
       () =>
         new Promise<undefined | Ldap.SearchEntryObject[]>((resolve, reject) => {
           return this.adminClient.search(
@@ -409,7 +411,8 @@ export class LdapService extends EventEmitter {
    * @returns {undefined} If user is not found but no error happened, result is undefined.
    * @throws {Error}
    */
-  private async findUser({ username, cache = true, loggerContext }: { username: string, cache?: boolean, loggerContext?: LoggerContext }): Promise<undefined | Ldap.SearchEntryObject> {
+  private async findUser({ username, cache = true, loggerContext }: { username: string, cache?: boolean, loggerContext?: LoggerContext }):
+    Promise<undefined | Ldap.SearchEntryObject> {
     if (!username) {
       throw new Error('empty username');
     }
@@ -436,7 +439,7 @@ export class LdapService extends EventEmitter {
       options.attributes = this.options.searchAttributes;
     }
 
-    return this.search(this.options.searchBase, options)
+    return this.search({ searchBase: this.options.searchBase, options, loggerContext })
       .then(
         (result) =>
           new Promise<undefined | Ldap.SearchEntryObject>((resolve, reject) => {
@@ -488,7 +491,7 @@ export class LdapService extends EventEmitter {
       options.attributes = ldapADattributes;
     }
 
-    return this.search(this.options.groupSearchBase || this.options.searchBase, options)
+    return this.search({ searchBase: this.options.groupSearchBase || this.options.searchBase, options, loggerContext })
       .then((result) => {
         // eslint-disable-next-line no-param-reassign
         (user.groups as unknown) = result;
@@ -574,7 +577,7 @@ export class LdapService extends EventEmitter {
       options.attributes = this.options.searchAttributes;
     }
 
-    return this.search(userByDN, options)
+    return this.search({ searchBase: userByDN, options, loggerContext })
       .then(
         (result) =>
           new Promise<LdapResponseUser>((resolve, reject) => {
@@ -635,7 +638,7 @@ export class LdapService extends EventEmitter {
       options.attributes = this.options.searchAttributesAllUsers;
     }
 
-    return this.search(this.options.searchBase, options)
+    return this.search({ searchBase: this.options.searchBase, options, loggerContext })
       .then(async (sync) => {
         if (sync) {
           await Promise.allSettled(sync.map(async (u) => await this.getGroups({ user: u, loggerContext })));
@@ -672,7 +675,7 @@ export class LdapService extends EventEmitter {
       options.attributes = this.options.groupSearchAttributes;
     }
 
-    return this.search(this.options.searchBase, options)
+    return this.search({ searchBase: this.options.searchBase, options, loggerContext })
       .then((sync) => {
         if (sync) {
           return (sync as unknown) as LdapResponseGroup[];
@@ -701,7 +704,7 @@ export class LdapService extends EventEmitter {
    * @throws {Ldap.Error}
    */
   public async modify({ dn, data, username, password, loggerContext }: { dn: string; data: Change[]; username?: string; password?: string; loggerContext?: LoggerContext}): Promise<boolean> {
-    return this.adminBind().then(
+    return this.adminBind({ loggerContext }).then(
       () =>
         new Promise<boolean>((resolve, reject) => {
           if (password) {
@@ -917,7 +920,7 @@ export class LdapService extends EventEmitter {
    * @throws {Error}
    */
   public async add({ entry, loggerContext }: { entry: LDAPAddEntry; loggerContext?: LoggerContext }): Promise<LdapResponseUser> {
-    return this.adminBind().then(
+    return this.adminBind({ loggerContext }).then(
       () =>
         new Promise<LdapResponseUser>((resolve, reject) => {
           if (!this.options.newObject) {

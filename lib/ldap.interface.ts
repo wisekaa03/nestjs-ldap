@@ -2,9 +2,9 @@
 // Copyright 2020 Stanislav V Vyaliy.  All rights reserved.
 
 //#region Imports NPM
-import { Logger } from '@nestjs/common';
-import { ModuleMetadata, Type } from '@nestjs/common/interfaces';
-import { ClientOptions, SearchEntryObject } from 'ldapjs';
+import type { Logger } from '@nestjs/common';
+import type { ModuleMetadata, Type } from '@nestjs/common/interfaces';
+import type { ClientOptions, SearchEntryObject } from 'ldapjs';
 import type { Redis } from 'ioredis';
 //#endregion
 
@@ -14,7 +14,7 @@ export const LDAP_OPTIONS = 'LDAP_OPTIONS';
 export type Scope = 'base' | 'one' | 'sub';
 
 export interface LoggerContext {
-  [key: string]: string | undefined | null;
+  [key: string]: string | unknown | null;
 }
 
 export interface LDAPCache {

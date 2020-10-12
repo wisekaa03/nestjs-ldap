@@ -13,7 +13,7 @@
     "jest.restartJestOnSnapshotUpdate": true,
     "javascript.format.enable": false,
     "typescript.format.enable": false,
-    "files.autoSave": "onWindowChange",
+    "files.autoSave": "off",
     "editor.formatOnSave": true,
     "[html]": {
       "editor.formatOnSave": false
@@ -28,16 +28,28 @@
       "editor.formatOnSave": false
     },
     "[javascript]": {
-      "editor.formatOnSave": false
+      "editor.formatOnSave": false,
+      "editor.codeActionsOnSave": {
+        "source.fixAll.eslint": true
+      }
     },
     "[javascriptreact]": {
-      "editor.formatOnSave": false
+      "editor.formatOnSave": false,
+      "editor.codeActionsOnSave": {
+        "source.fixAll.eslint": true
+      }
     },
     "[typescript]": {
-      "editor.formatOnSave": false
+      "editor.formatOnSave": false,
+      "editor.codeActionsOnSave": {
+        "source.fixAll.eslint": true
+      }
     },
     "[typescriptreact]": {
-      "editor.formatOnSave": false
+      "editor.formatOnSave": false,
+      "editor.codeActionsOnSave": {
+        "source.fixAll.eslint": true
+      }
     },
     "typescript.tsdk": "node_modules/typescript/lib",
     "less.lint.duplicateProperties": "warning",
@@ -49,27 +61,16 @@
     "eslint.trace.server": "verbose",
     "eslint.validate": [
       "css",
-      "graphql",
-      "html",
       "javascript",
       "javascriptreact",
-      "json",
-      "json5",
-      "jsonc",
       "less",
       "markdown",
-      "mdx",
-      "mongo",
-      "postcss",
       "scss",
       "typescript",
       "typescriptreact",
-      "vue",
-      "yaml"    
+      "yaml"
     ],
-    "prettier.disableLanguages": [
-      "vue"
-    ],
+    "prettier.disableLanguages": ["vue"],
     "editor.tabSize": 2,
     "scss.lint.boxModel": "warning",
     "scss.lint.compatibleVendorPrefixes": "warning",

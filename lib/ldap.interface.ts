@@ -17,11 +17,6 @@ export interface LoggerContext {
   [key: string]: string | unknown | null;
 }
 
-export interface LDAPCache {
-  user: LdapResponseUser;
-  password: string;
-}
-
 export interface LDAPAddEntry {
   /**
    * Common name
@@ -260,7 +255,7 @@ export interface LdapResponseUser {
 
   'whenChanged'?: Date;
   'whenCreated'?: Date;
-  'badPasswordTime'?: Date
+  'badPasswordTime'?: Date;
   'badPwdCount'?: number;
 
   // Logon, logoff
@@ -495,3 +490,8 @@ export const ldapADattributes = [
   'msDS-cloudExtensionAttribute19',
   'msDS-cloudExtensionAttribute20',
 ];
+
+export interface LDAPCache {
+  user: LdapResponseUser;
+  password: string;
+}

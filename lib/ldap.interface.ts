@@ -304,11 +304,11 @@ interface GroupSearchFilterFunction {
   (user: SearchEntryObject): string;
 }
 
-export interface LdapModuleOptions extends ClientOptions {
+export interface LdapDomainsConfig extends ClientOptions {
   /**
-   * Logger function
+   * Name string: EXAMPLE.COM
    */
-  logger?: Logger;
+  name: string;
 
   /**
    * Admin connection DN, e.g. uid=myapp,ou=users,dc=example,dc=org.
@@ -401,17 +401,29 @@ export interface LdapModuleOptions extends ClientOptions {
   sizeLimit?: number;
 
   /**
+   * Where to have new objects (contacts, users) to place
+   */
+  newObject?: string;
+}
+
+export interface LdapModuleOptions {
+  /**
+   * Logger function
+   */
+  logger?: Logger;
+
+  /**
+   * Domains config
+   */
+  domains: LdapDomainsConfig[];
+
+  /**
    * If true, then up to 100 credentials at a time will be cached for
    * 5 minutes.
    */
   cache?: Redis;
   cacheUrl?: string;
   cacheTtl?: number;
-
-  /**
-   * If it is filled, it will be available to add
-   */
-  newObject?: string;
 }
 
 export interface LdapOptionsFactory {

@@ -28,6 +28,13 @@
 
     "rootDir": "./lib"
   },
-  "include": ["lib/**/*", "typings/global.d.ts"],
-  "exclude": ["node_modules", "test", "**/*spec.ts"]
+  "include": ["typings/global.d.ts", "lib"],
+  "exclude": [
+    "node_modules",
+    "test",
+    "dist",
+    "__mocks__",
+    "**/*spec.ts",
+    "jest.setup.ts"
+  ]
 }

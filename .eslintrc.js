@@ -6,6 +6,7 @@ module.exports = {
   extends: [
     'plugin:@typescript-eslint/eslint-recommended',
     'plugin:@typescript-eslint/recommended',
+    'plugin:jest/recommended',
     'prettier',
     'prettier/@typescript-eslint',
     'plugin:prettier/recommended',
@@ -23,6 +24,13 @@ module.exports = {
     },
     'import/ignore': ['\\.coffee$', '\\.(scss|less|css)$', '\\.(svg|png|jpe?g|webp|gif)(\\?.*)?$'],
   },
+  globals: {
+    window: true,
+    document: true,
+    process: true,
+    __DEV__: true,
+    __SERVER__: true,
+  },
   parserOptions: {
     sourceType: 'module',
     jsx: true,
@@ -37,6 +45,7 @@ module.exports = {
     node: true,
   },
   rules: {
+    'no-underscore-dangle': 0,
     'jest/valid-title': 0,
     'no-confusing-arrow': 0,
     '@typescript-eslint/indent': 0,

@@ -1,0 +1,17 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "module": "esnext",
+    "target": "es2020",
+    "lib": ["es2018", "es2020", "esnext"],
+    "jsx": "react",
+    "allowJs": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "experimentalDecorators": true,
+    "noImplicitAny": true,
+    "sourceMap": true
+  },
+  "include": ["typings/global.d.ts", "lib"],
+  "exclude": ["dist", "node_modules", ".local"]
+}

@@ -1,6 +1,6 @@
 {
   "name": "nestjs-ldap",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "description": "NestJS library to access LDAP",
   "author": "Stanislav V Vyaliy",
   "license": "MIT",
@@ -36,6 +36,8 @@
     "winston": "^3"
   },
   "devDependencies": {
+    "@nestjs/core": "*",
+    "@nestjs/testing": "*",
     "@types/asn1": "*",
     "@types/bcrypt": "*",
     "@types/cache-manager": "*",
@@ -49,14 +51,19 @@
     "eslint-config-prettier": "*",
     "eslint-import-resolver-typescript": "*",
     "eslint-plugin-import": "*",
+    "eslint-plugin-jest": "*",
     "eslint-plugin-jsx-a11y": "*",
     "eslint-plugin-prettier": "*",
     "eslint-plugin-react": "*",
     "eslint-plugin-react-hooks": "*",
-    "jest": "^*",
+    "jest": "*",
+    "jest-svg-transformer": "*",
+    "jest-transform-stub": "*",
     "prettier": "*",
+    "react": "*",
     "reflect-metadata": "*",
     "rimraf": "*",
+    "ts-jest": "*",
     "tsconfig-paths": "*",
     "typescript": "*"
   }

@@ -401,7 +401,7 @@ export interface LdapDomainsConfig extends ClientOptions {
   sizeLimit?: number;
 
   /**
-   * Where to have new objects (contacts, users) to place
+   * Where new objects (contacts, users) to place
    */
   newObject?: string;
 }

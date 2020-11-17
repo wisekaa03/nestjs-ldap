@@ -247,28 +247,28 @@ export class LdapService {
    * Synchronize users
    *
    * @async
-   * @returns {LdapResponseUser[]} User in LDAP
+   * @returns {Record<string, LdapResponseUser[]>} User in LDAP
    * @throws {Error}
    */
-  public async synchronization({ loggerContext }: { loggerContext?: LoggerContext }): Promise<LdapResponseUser[]> {
+  public async synchronization({ loggerContext }: { loggerContext?: LoggerContext }): Promise<Record<string, LdapResponseUser[]>> {
     const promiseDomain = this.ldapDomains.map(async (domain) => domain.synchronization({ loggerContext }));
-    return Promise.allSettled(promiseDomain)
-      .then((values) => values.map((promise) => (promise.status === 'fulfilled' ? promise.value : [])))
-      .then((values) => values.reduce((accumulator, value) => (value ? accumulator.concat(value) : accumulator), []));
+    return Promise.allSettled(promiseDomain).then((promises) =>
+      promises.reduce((accumulator, domain) => (domain.status === 'fulfilled' ? { ...accumulator, ...domain.value } : accumulator), {}),
+    );
   }
 
   /**
    * Synchronize users
    *
    * @async
-   * @returns {LdapResponseGroup[]} Group in LDAP
+   * @returns {Record<string, LdapResponseGroup[]>} Group in LDAP
    * @throws {Error}
    */
-  public async synchronizationGroups({ loggerContext }: { loggerContext?: LoggerContext }): Promise<LdapResponseGroup[]> {
+  public async synchronizationGroups({ loggerContext }: { loggerContext?: LoggerContext }): Promise<Record<string, LdapResponseGroup[]>> {
     const promiseDomain = this.ldapDomains.map(async (domain) => domain.synchronizationGroups({ loggerContext }));
-    return Promise.allSettled(promiseDomain)
-      .then((values) => values.map((promise) => (promise.status === 'fulfilled' ? promise.value : [])))
-      .then((values) => values.reduce((accumulator, value) => (value ? accumulator.concat(value) : accumulator), []));
+    return Promise.allSettled(promiseDomain).then((promises) =>
+      promises.reduce((accumulator, domain) => (domain.status === 'fulfilled' ? { ...accumulator, ...domain.value } : accumulator), {}),
+    );
   }
 
   /**

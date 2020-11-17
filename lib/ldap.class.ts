@@ -71,7 +71,7 @@ export class LdapDomain extends EventEmitter {
 
     if (options.reconnect) {
       this.once('installReconnectListener', () => {
-        this.logger.debug('install reconnect listener', {
+        this.logger.debug(`${options.name}: install reconnect listener`, {
           context: LdapDomain.name,
           function: 'constructor',
         });
@@ -151,7 +151,7 @@ export class LdapDomain extends EventEmitter {
    */
   private handleErrorAdmin(error: Ldap.Error): void {
     if (`${error.code}` !== 'ECONNRESET') {
-      this.logger.error(`admin emitted error: [${error.code}]`, {
+      this.logger.error(`${this.domainName}: admin emitted error: [${error.code}]`, {
         error,
         context: LdapDomain.name,
         function: this.handleErrorAdmin.name,
@@ -169,7 +169,7 @@ export class LdapDomain extends EventEmitter {
    */
   private handleErrorUser(error: Ldap.Error): void {
     if (`${error.code}` !== 'ECONNRESET') {
-      this.logger.error(`user emitted error: [${error.code}]`, {
+      this.logger.error(`${this.domainName}: user emitted error: [${error.code}]`, {
         error,
         context: LdapDomain.name,
         function: this.handleErrorUser.name,
@@ -186,7 +186,7 @@ export class LdapDomain extends EventEmitter {
    * @returns {void}
    */
   private handleConnectError(error: Ldap.Error): void {
-    this.logger.error(`emitted error: [${error.code}]`, {
+    this.logger.error(`${this.domainName}: emitted error: [${error.code}]`, {
       error,
       context: LdapDomain.name,
       function: this.handleConnectError.name,
@@ -205,10 +205,10 @@ export class LdapDomain extends EventEmitter {
     if (typeof this.bindDN === 'undefined' || this.bindDN === null) {
       this.adminBound = false;
 
-      throw new Error('bindDN is undefined');
+      throw new Error(`${this.domainName}: bindDN is undefined`);
     }
 
-    this.logger.debug(`bind: ${this.bindDN} ...`, {
+    this.logger.debug(`${this.domainName}: bind: ${this.bindDN} ...`, {
       context: LdapDomain.name,
       function: this.onConnectAdmin.name,
       ...loggerContext,
@@ -217,7 +217,7 @@ export class LdapDomain extends EventEmitter {
     return new Promise<boolean>((resolve, reject) =>
       this.adminClient.bind(this.bindDN, this.bindCredentials, (error) => {
         if (error) {
-          this.logger.error(`bind error: ${error.toString()}`, {
+          this.logger.error(`${this.domainName}: bind error: ${error.toString()}`, {
             error,
             context: LdapDomain.name,
             function: this.onConnectAdmin.name,
@@ -228,7 +228,7 @@ export class LdapDomain extends EventEmitter {
           return reject(error);
         }
 
-        this.logger.debug('bind ok', {
+        this.logger.debug(`${this.domainName}: bind ok`, {
           context: LdapDomain.name,
           function: this.onConnectAdmin.name,
           ...loggerContext,
@@ -421,7 +421,7 @@ export class LdapDomain extends EventEmitter {
           }),
       )
       .catch((error: Error) => {
-        this.logger.error(`user search error: ${error.toString()}`, {
+        this.logger.error(`${this.domainName}: user search error: ${error.toString()}`, {
           error,
           context: LdapDomain.name,
           function: this.findUser.name,
@@ -476,7 +476,7 @@ export class LdapDomain extends EventEmitter {
         return user;
       })
       .catch((error: Error) => {
-        this.logger.error(`group search error: ${error.toString()}`, {
+        this.logger.error(`${this.domainName}: group search error: ${error.toString()}`, {
           error,
           context: LdapDomain.name,
           function: this.findGroups.name,
@@ -504,7 +504,7 @@ export class LdapDomain extends EventEmitter {
     return this.findUser({ username: userByUsername, loggerContext })
       .then((search) => (search as unknown) as LdapResponseUser)
       .catch((error: Error) => {
-        this.logger.error(`Search by Username error: ${error.toString()}`, {
+        this.logger.error(`${this.domainName}: Search by Username error: ${error.toString()}`, {
           error,
           context: LdapDomain.name,
           function: this.searchByUsername.name,
@@ -553,14 +553,14 @@ export class LdapDomain extends EventEmitter {
       )
       .catch((error: Error | Ldap.NoSuchObjectError) => {
         if (error instanceof Ldap.NoSuchObjectError) {
-          this.logger.error(`Not found error: ${error.toString()}`, {
+          this.logger.error(`${this.domainName}: Not found error: ${error.toString()}`, {
             error,
             context: LdapDomain.name,
             function: this.searchByDN.name,
             ...loggerContext,
           });
         } else {
-          this.logger.error(`Search by DN error: ${error.toString()}`, {
+          this.logger.error(`${this.domainName}: Search by DN error: ${error.toString()}`, {
             error,
             context: LdapDomain.name,
             function: this.searchByDN.name,
@@ -576,10 +576,10 @@ export class LdapDomain extends EventEmitter {
    * Synchronize users
    *
    * @async
-   * @returns {LdapResponseUser[]} User in LDAP
+   * @returns {Record<string, LdapResponseUser[]>} User in LDAP
    * @throws {Error}
    */
-  public async synchronization({ loggerContext }: { loggerContext?: LoggerContext }): Promise<LdapResponseUser[]> {
+  public async synchronization({ loggerContext }: { loggerContext?: LoggerContext }): Promise<Record<string, LdapResponseUser[]>> {
     const options = {
       filter: this.options.searchFilterAllUsers,
       scope: this.options.searchScopeAllUsers,
@@ -600,10 +600,10 @@ export class LdapDomain extends EventEmitter {
         if (sync) {
           await Promise.allSettled(sync.map(async (u) => this.getGroups({ user: u, loggerContext })));
 
-          return (sync as unknown) as LdapResponseUser[];
+          return { [this.domainName]: (sync as unknown) as LdapResponseUser[] };
         }
 
-        this.logger.error('Synchronize unknown error.', {
+        this.logger.error(`${this.domainName}: Synchronize unknown error.`, {
           error: 'Unknown',
           context: LdapDomain.name,
           function: this.synchronization.name,
@@ -612,7 +612,7 @@ export class LdapDomain extends EventEmitter {
         throw new Error('Synchronize unknown error.');
       })
       .catch((error: Error | Ldap.Error) => {
-        this.logger.error(`Synchronize error: ${error.toString()}`, {
+        this.logger.error(`${this.domainName}: Synchronize error: ${error.toString()}`, {
           error,
           context: LdapDomain.name,
           function: this.synchronization.name,
@@ -627,10 +627,10 @@ export class LdapDomain extends EventEmitter {
    * Synchronize users
    *
    * @async
-   * @returns {LdapResponseGroup[]} Group in LDAP
+   * @returns {Record<string, LdapResponseGroup[]>} Group in LDAP
    * @throws {Error}
    */
-  public async synchronizationGroups({ loggerContext }: { loggerContext?: LoggerContext }): Promise<LdapResponseGroup[]> {
+  public async synchronizationGroups({ loggerContext }: { loggerContext?: LoggerContext }): Promise<Record<string, LdapResponseGroup[]>> {
     const options = {
       filter: this.options.searchFilterAllGroups,
       scope: this.options.groupSearchScope,
@@ -649,19 +649,19 @@ export class LdapDomain extends EventEmitter {
     })
       .then((sync) => {
         if (sync) {
-          return (sync as unknown) as LdapResponseGroup[];
+          return { [this.domainName]: (sync as unknown) as LdapResponseGroup[] };
         }
 
-        this.logger.error('synchronizationGroups: unknown error.', {
+        this.logger.error(`${this.domainName}: synchronizationGroups: unknown error.`, {
           error: 'Unknown',
           context: LdapDomain.name,
           function: this.synchronizationGroups.name,
           ...loggerContext,
         });
-        throw new Error('synchronizationGroups: unknown error.');
+        throw new Error(`${this.domainName}: synchronizationGroups: unknown error.`);
       })
       .catch((error: Error) => {
-        this.logger.error(`synchronizationGroups error: ${error.toString()}`, {
+        this.logger.error(`${this.domainName}: synchronizationGroups error: ${error.toString()}`, {
           error,
           context: LdapDomain.name,
           function: this.synchronizationGroups.name,
@@ -711,7 +711,7 @@ export class LdapDomain extends EventEmitter {
               });
 
               if (error) {
-                this.logger.error(`bind error: ${error.toString()}`, {
+                this.logger.error(`${this.domainName}: bind error: ${error.toString()}`, {
                   error,
                   context: LdapDomain.name,
                   function: this.modify.name,
@@ -726,7 +726,7 @@ export class LdapDomain extends EventEmitter {
                 data,
                 async (searchError: Ldap.Error | null): Promise<void> => {
                   if (searchError) {
-                    this.logger.error(`Modify error "${dn}": ${searchError.toString()}`, {
+                    this.logger.error(`${this.domainName}: Modify error "${dn}": ${searchError.toString()}`, {
                       error: searchError,
                       context: LdapDomain.name,
                       function: this.modify.name,
@@ -736,7 +736,7 @@ export class LdapDomain extends EventEmitter {
                     reject(searchError);
                   }
 
-                  this.logger.debug(`Modify success "${dn}"`, {
+                  this.logger.debug(`${this.domainName}: Modify success "${dn}"`, {
                     context: LdapDomain.name,
                     function: this.modify.name,
                     ...loggerContext,
@@ -759,7 +759,7 @@ export class LdapDomain extends EventEmitter {
                 });
 
                 if (searchError) {
-                  this.logger.error(`Modify error "${dn}": ${searchError.toString()}`, {
+                  this.logger.error(`${this.domainName}: Modify error "${dn}": ${searchError.toString()}`, {
                     error: searchError,
                     context: LdapDomain.name,
                     function: this.modify.name,
@@ -770,7 +770,7 @@ export class LdapDomain extends EventEmitter {
                   return;
                 }
 
-                this.logger.debug(`Modify success "${dn}": ${JSON.stringify(data)}`, {
+                this.logger.debug(`${this.domainName}: Modify success "${dn}": ${JSON.stringify(data)}`, {
                   context: LdapDomain.name,
                   function: this.modify.name,
                   ...loggerContext,
@@ -804,7 +804,7 @@ export class LdapDomain extends EventEmitter {
   }): Promise<LdapResponseUser> {
     // 1. Find the user DN in question.
     const foundUser = await this.findUser({ username, loggerContext }).catch((error: Error) => {
-      this.logger.error(`Not found user: "${username}"`, {
+      this.logger.error(`${this.domainName}: Not found user: "${username}"`, {
         error,
         context: LdapDomain.name,
         function: this.authenticateInternal.name,
@@ -814,7 +814,7 @@ export class LdapDomain extends EventEmitter {
       throw error;
     });
     if (!foundUser) {
-      this.logger.error(`Not found user: "${username}"`, {
+      this.logger.error(`${this.domainName}: Not found user: "${username}"`, {
         error: 'Not found user',
         context: LdapDomain.name,
         function: this.authenticateInternal.name,
@@ -831,7 +831,7 @@ export class LdapDomain extends EventEmitter {
         password,
         async (bindError): Promise<unknown | LdapResponseUser> => {
           if (bindError) {
-            this.logger.error(`bind error: ${bindError.toString()}`, {
+            this.logger.error(`${this.domainName}: bind error: ${bindError.toString()}`, {
               error: bindError,
               context: LdapDomain.name,
               function: this.authenticateInternal.name,
@@ -850,7 +850,7 @@ export class LdapDomain extends EventEmitter {
               })) as unknown) as LdapResponseUser,
             );
           } catch (error) {
-            this.logger.error(`Authenticate error: ${error.toString()}`, {
+            this.logger.error(`${this.domainName}: Authenticate error: ${error.toString()}`, {
               error,
               context: LdapDomain.name,
               function: this.authenticateInternal.name,
@@ -883,13 +883,13 @@ export class LdapDomain extends EventEmitter {
     loggerContext?: LoggerContext;
   }): Promise<LdapResponseUser> {
     if (!password) {
-      this.logger.error('No password given', {
+      this.logger.error(`${this.domainName}: No password given`, {
         error: 'No password given',
         context: LdapDomain.name,
         function: this.authenticate.name,
         ...loggerContext,
       });
-      throw new Error('No password given');
+      throw new Error(`${this.domainName}: No password given`);
     }
 
     try {
@@ -899,7 +899,7 @@ export class LdapDomain extends EventEmitter {
         loggerContext,
       });
     } catch (error) {
-      this.logger.error(`LDAP auth error: ${error.toString()}`, {
+      this.logger.error(`${this.domainName}: LDAP auth error: ${error.toString()}`, {
         error,
         context: LdapDomain.name,
         function: this.authenticate.name,
@@ -974,13 +974,13 @@ export class LdapDomain extends EventEmitter {
     // client has been bound (e.g. how ldapjs pool destroy does)
     return new Promise<boolean>((resolve) => {
       this.adminClient.unbind(() => {
-        this.logger.debug('adminClient: close', {
+        this.logger.debug(`${this.domainName}: adminClient: close`, {
           context: LdapDomain.name,
           function: this.close.name,
         });
 
         this.userClient.unbind(() => {
-          this.logger.debug('userClient: close', {
+          this.logger.debug(`${this.domainName}: userClient: close`, {
             context: LdapDomain.name,
             function: this.close.name,
           });

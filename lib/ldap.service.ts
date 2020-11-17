@@ -148,7 +148,7 @@ export class LdapService {
 
     return domainLdap.searchByUsername({ userByUsername, loggerContext }).then((user) => {
       if (user && this.cache) {
-        this.logger.debug(`To cache: ${domain}\\${user.dn}`, {
+        this.logger.debug(`To cache from domain ${domain}: ${user.dn}`, {
           context: LdapService.name,
           function: this.searchByUsername.name,
           ...loggerContext,
@@ -156,7 +156,7 @@ export class LdapService {
         this.cache.set<LDAPCache>(`dn:${domain}:${user.dn}`, { user, password: LDAP_PASSWORD_NULL }, { ttl: this.cacheTtl });
 
         if (user.sAMAccountName) {
-          this.logger.debug(`To cache: ${domain}\\${user.sAMAccountName}`, {
+          this.logger.debug(`To cache from domain ${domain}: ${user.sAMAccountName}`, {
             context: LdapService.name,
             function: this.searchByUsername.name,
             ...loggerContext,
@@ -210,7 +210,7 @@ export class LdapService {
     if (!domainLdap) {
       this.logger.debug(`Domain does not exist: ${domain}`, {
         context: LdapService.name,
-        function: this.searchByUsername.name,
+        function: this.searchByDN.name,
         ...loggerContext,
       });
       throw new Error(`Domain does not exist: ${domain}`);
@@ -218,17 +218,17 @@ export class LdapService {
 
     return domainLdap.searchByDN({ userByDN, loggerContext }).then((user) => {
       if (user && this.cache) {
-        this.logger.debug(`To cache: ${domain}\\${userByDN}`, {
+        this.logger.debug(`To cache from domain ${domain}: ${userByDN}`, {
           context: LdapService.name,
-          function: 'searchByDN',
+          function: this.searchByDN.name,
           ...loggerContext,
         });
         this.cache.set<LDAPCache>(cachedID, { user, password: LDAP_PASSWORD_NULL }, { ttl: this.cacheTtl });
 
         if (user.sAMAccountName) {
-          this.logger.debug(`To cache: ${domain}\\${user.sAMAccountName}`, {
+          this.logger.debug(`To cache from domain ${domain}: ${user.sAMAccountName}`, {
             context: LdapService.name,
-            function: 'searchByDN',
+            function: this.searchByDN.name,
             ...loggerContext,
           });
           this.cache.set<LDAPCache>(
@@ -302,7 +302,7 @@ export class LdapService {
     if (!domainLdap) {
       this.logger.debug(`Domain does not exist: ${domain}`, {
         context: LdapService.name,
-        function: this.searchByUsername.name,
+        function: this.modify.name,
         ...loggerContext,
       });
       throw new Error(`Domain does not exist: ${domain}`);
@@ -335,8 +335,8 @@ export class LdapService {
     loggerContext?: LoggerContext;
   }): Promise<LdapResponseUser> {
     if (!password) {
-      this.logger.error('No password given', {
-        error: 'No password given',
+      this.logger.error(`${domain}: No password given`, {
+        error: `${domain}: No password given`,
         context: LdapService.name,
         function: this.authenticate.name,
         ...loggerContext,
@@ -348,7 +348,7 @@ export class LdapService {
     if (!domainLdap) {
       this.logger.debug(`Domain does not exist: ${domain}`, {
         context: LdapService.name,
-        function: this.searchByUsername.name,
+        function: this.authenticate.name,
         ...loggerContext,
       });
       throw new Error(`Domain does not exist: ${domain}`);
@@ -358,14 +358,8 @@ export class LdapService {
     if (cache && this.cache) {
       // Check cache. 'cached' is `{password: <hashed-password>, user: <user>}`.
       const cached: LDAPCache = await this.cache.get<LDAPCache>(cachedID);
-      if (
-        cached &&
-        cached.user &&
-        cached.user.sAMAccountName &&
-        cached.password &&
-        (cached.password === LDAP_PASSWORD_NULL || bcrypt.compareSync(password, cached.password))
-      ) {
-        this.logger.debug(`From cache: ${domain}\\${cached.user.sAMAccountName}`, {
+      if (cached?.user?.sAMAccountName && (cached?.password === LDAP_PASSWORD_NULL || bcrypt.compareSync(password, cached.password))) {
+        this.logger.debug(`From cache ${domain}: ${cached.user.sAMAccountName}`, {
           context: LdapService.name,
           function: this.authenticate.name,
           ...loggerContext,
@@ -379,7 +373,7 @@ export class LdapService {
               loggerContext,
             });
             if (JSON.stringify(user) !== JSON.stringify(cached.user) && this.cache) {
-              this.logger.debug(`To cache: ${domain}\\${user.sAMAccountName}`, {
+              this.logger.debug(`To cache from domain ${domain}: ${user.sAMAccountName}`, {
                 context: LdapService.name,
                 function: this.authenticate.name,
                 ...loggerContext,
@@ -395,7 +389,7 @@ export class LdapService {
               );
             }
           } catch (error) {
-            this.logger.error(`LDAP auth error: ${error.toString()}`, {
+            this.logger.error(`LDAP auth error [${domain}]: ${error.toString()}`, {
               error,
               context: LdapService.name,
               function: this.authenticate.name,
@@ -416,7 +410,7 @@ export class LdapService {
       })
       .then((user) => {
         if (this.cache) {
-          this.logger.debug(`To cache: ${domain}\\${user.sAMAccountName}`, {
+          this.logger.debug(`To cache from domain ${domain}: ${user.sAMAccountName}`, {
             context: LdapService.name,
             function: this.authenticate.name,
             ...loggerContext,

@@ -387,12 +387,13 @@ export class LdapDomain extends EventEmitter {
     }
 
     const searchFilter = this.options.searchFilter.replace(/{{username}}/g, this.sanitizeInput(username));
-    const options = {
+    const options: Ldap.SearchOptions = {
       filter: searchFilter,
       scope: this.options.searchScope,
       attributes: ldapADattributes,
       timeLimit: this.options.timeLimit,
       sizeLimit: this.options.sizeLimit,
+      paged: true,
     };
     if (this.options.searchAttributes) {
       options.attributes = this.options.searchAttributes;
@@ -457,6 +458,7 @@ export class LdapDomain extends EventEmitter {
       scope: this.options.groupSearchScope,
       timeLimit: this.options.timeLimit,
       sizeLimit: this.options.sizeLimit,
+      paged: true,
     };
     if (this.options.groupSearchAttributes) {
       options.attributes = this.options.groupSearchAttributes;
@@ -523,11 +525,12 @@ export class LdapDomain extends EventEmitter {
    * @returns {Promise<LdapResponseUser>} User in LDAP
    */
   public async searchByDN({ userByDN, loggerContext }: { userByDN: string; loggerContext?: LoggerContext }): Promise<LdapResponseUser> {
-    const options = {
+    const options: Ldap.SearchOptions = {
       scope: this.options.searchScope,
       attributes: ['*'],
       timeLimit: this.options.timeLimit,
       sizeLimit: this.options.sizeLimit,
+      paged: true,
     };
     if (this.options.searchAttributes) {
       options.attributes = this.options.searchAttributes;
@@ -580,12 +583,13 @@ export class LdapDomain extends EventEmitter {
    * @throws {Error}
    */
   public async synchronization({ loggerContext }: { loggerContext?: LoggerContext }): Promise<Record<string, LdapResponseUser[]>> {
-    const options = {
+    const options: Ldap.SearchOptions = {
       filter: this.options.searchFilterAllUsers,
       scope: this.options.searchScopeAllUsers,
       attributes: ldapADattributes,
       timeLimit: this.options.timeLimit,
       sizeLimit: this.options.sizeLimit,
+      paged: true,
     };
     if (this.options.searchAttributesAllUsers) {
       options.attributes = this.options.searchAttributesAllUsers;
@@ -631,12 +635,13 @@ export class LdapDomain extends EventEmitter {
    * @throws {Error}
    */
   public async synchronizationGroups({ loggerContext }: { loggerContext?: LoggerContext }): Promise<Record<string, LdapResponseGroup[]>> {
-    const options = {
+    const options: Ldap.SearchOptions = {
       filter: this.options.searchFilterAllGroups,
       scope: this.options.groupSearchScope,
       attributes: ldapADattributes,
       timeLimit: this.options.timeLimit,
       sizeLimit: this.options.sizeLimit,
+      paged: true,
     };
     if (this.options.groupSearchAttributes) {
       options.attributes = this.options.groupSearchAttributes;
@@ -918,12 +923,13 @@ export class LdapDomain extends EventEmitter {
    * @throws {Error}
    */
   public async trustedDomain({ searchBase, loggerContext }: { searchBase: string; loggerContext?: LoggerContext }): Promise<any> {
-    const options = {
+    const options: Ldap.SearchOptions = {
       filter: '(&(objectClass=trustedDomain))',
       scope: this.options.searchScope,
       attributes: ldapADattributes,
       timeLimit: this.options.timeLimit,
       sizeLimit: this.options.sizeLimit,
+      paged: true,
     };
 
     const trustedDomain = await this.search({

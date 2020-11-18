@@ -34,6 +34,11 @@ export interface LDAPAddEntry {
 
 export interface LdapResponseGroup {
   /**
+   * Domain of this group
+   */
+  loginDomain?: string;
+
+  /**
    * Common name
    */
   cn: string;
@@ -75,6 +80,11 @@ export interface LdapResponseGroup {
 }
 
 export interface LdapResponseUser {
+  /**
+   * Domain of this user
+   */
+  'loginDomain'?: string;
+
   /**
    * DN
    */

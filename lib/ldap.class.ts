@@ -504,7 +504,7 @@ export class LdapDomain extends EventEmitter {
     loggerContext?: LoggerContext;
   }): Promise<LdapResponseUser> {
     return this.findUser({ username: userByUsername, loggerContext })
-      .then((search) => (search as unknown) as LdapResponseUser)
+      .then((search) => ({ loginDomain: this.domainName, ...((search as unknown) as LdapResponseUser) }))
       .catch((error: Error) => {
         this.logger.error(`${this.domainName}: Search by Username error: ${error.toString()}`, {
           error,
@@ -548,7 +548,7 @@ export class LdapDomain extends EventEmitter {
               case 0:
                 return reject(new Ldap.NoSuchObjectError());
               case 1:
-                return resolve((result[0] as unknown) as LdapResponseUser);
+                return resolve({ loginDomain: this.domainName, ...((result[0] as unknown) as LdapResponseUser) });
               default:
                 return reject(new Error(`unexpected number of matches (${result.length}) for "${userByDN}" user DN`));
             }

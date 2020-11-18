@@ -604,7 +604,7 @@ export class LdapDomain extends EventEmitter {
         if (sync) {
           await Promise.allSettled(sync.map(async (u) => this.getGroups({ user: u, loggerContext })));
 
-          return { [this.domainName]: (sync as unknown) as LdapResponseUser[] };
+          return { [this.domainName]: { ...((sync as unknown) as LdapResponseUser[]), loginDomain: this.domainName } };
         }
 
         this.logger.error(`${this.domainName}: Synchronize unknown error.`, {
@@ -654,7 +654,7 @@ export class LdapDomain extends EventEmitter {
     })
       .then((sync) => {
         if (sync) {
-          return { [this.domainName]: (sync as unknown) as LdapResponseGroup[] };
+          return { [this.domainName]: { ...((sync as unknown) as LdapResponseGroup[]), loginDomain: this.domainName } };
         }
 
         this.logger.error(`${this.domainName}: synchronizationGroups: unknown error.`, {

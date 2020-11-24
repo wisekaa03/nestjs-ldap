@@ -27,13 +27,13 @@
   "dependencies": {
     "@nestjs/common": "*",
     "bcrypt": "*",
-    "cache-manager": "^3",
+    "cache-manager": "3.4.0",
     "cache-manager-ioredis": "*",
-    "ldapjs": "^2",
-    "nest-winston": "^1",
+    "ldapjs": "2.2.2",
+    "nest-winston": "1.4.0",
     "rxjs": "*",
     "url": "*",
-    "winston": "^3"
+    "winston": "3.3.3"
   },
   "devDependencies": {
     "@nestjs/core": "*",

@@ -1,6 +1,6 @@
 {
   "name": "nestjs-ldap",
-  "version": "2.0.12",
+  "version": "3.0.0",
   "description": "NestJS library to access LDAP",
   "author": "Stanislav V Vyaliy",
   "license": "MIT",
@@ -27,13 +27,11 @@
   "dependencies": {
     "@nestjs/common": "*",
     "bcrypt": "*",
-    "cache-manager": "3.4.0",
+    "cache-manager": "^3",
     "cache-manager-ioredis": "*",
-    "ldapjs": "2.2.2",
-    "nest-winston": "1.4.0",
+    "ldapjs": "^2",
     "rxjs": "*",
-    "url": "*",
-    "winston": "3.3.3"
+    "url": "*"
   },
   "devDependencies": {
     "@nestjs/core": "*",

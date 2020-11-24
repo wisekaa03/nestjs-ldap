@@ -24,29 +24,35 @@ $ yarn add nestjs-ldap
       ...
       LdapModule.registerAsync({
         inject: [ConfigService],
-        useFactory: async (configService: ConfigService) => ({
-          url: 'ldaps://pdc.example.local:389',
-          bindDN: 'CN=Administrator,DC=example,DC=local',
-          bindCredentials: 'PaSsWoRd123',
-          searchBase: 'DC=example,DC=local',
-          searchFilter: '(&(&(|(&(objectClass=user)(objectCategory=person))(&(objectClass=contact)(objectCategory=person)))))',
-          searchScope: 'sub' as Scope,
-          groupSearchBase: 'DC=example,DC=local',
-          groupSearchFilter: '(&(objectClass=group)(member={{dn}}))',
-          groupSearchScope: 'sub' as Scope,
-          groupDnProperty: 'dn',
-          searchBaseAllUsers: 'DC=example,DC=local',
-          searchFilterAllUsers: '(&(&(|(&(objectClass=user)(objectCategory=person))(&(objectClass=contact)(objectCategory=person)))))',
-          searchFilterAllGroups: 'objectClass=group',
-          searchScopeAllUsers: 'sub' as Scope,
-          newObject: 'OU=User,DC=example,DC=local',
-          reconnect: true,
-          cacheUrl: 'redis://localhost:6379/',
-          cacheTtl: 300, // in ms
-          groupSearchAttributes: ldapADattributes,
-          searchAttributes: ldapADattributes,
-          searchAttributesAllUsers: ldapADattributes,
-        }),
+        useFactory: async (configService: ConfigService) => (
+          {
+            cache: new Redis(), /* optional */
+            cacheUrl: 'redis://username:password@example.com:6379/0', /* optional */
+            cacheTtl: 600, /* optional */
+            domains: [
+              'example.com' => {
+                url: 'ldaps://pdc.example.local:389',
+                bindDN: 'CN=Administrator,DC=example,DC=local',
+                bindCredentials: 'PaSsWoRd123',
+                searchBase: 'DC=example,DC=local',
+                searchFilter: '(&(&(|(&(objectClass=user)(objectCategory=person))(&(objectClass=contact)(objectCategory=person)))))',
+                searchScope: 'sub' as Scope,
+                groupSearchBase: 'DC=example,DC=local',
+                groupSearchFilter: '(&(objectClass=group)(member={{dn}}))',
+                groupSearchScope: 'sub' as Scope,
+                groupDnProperty: 'dn',
+                searchBaseAllUsers: 'DC=example,DC=local',
+                searchFilterAllUsers: '(&(&(|(&(objectClass=user)(objectCategory=person))(&(objectClass=contact)(objectCategory=person)))))',
+                searchFilterAllGroups: 'objectClass=group',
+                searchScopeAllUsers: 'sub' as Scope,
+                newObject: 'OU=User,DC=example,DC=local',
+                reconnect: true,
+                groupSearchAttributes: ldapADattributes,
+                searchAttributes: ldapADattributes,
+                searchAttributesAllUsers: ldapADattributes,
+              },
+            ]
+          }),
       }),
       ...
     ]

@@ -1,7 +1,7 @@
 /** @format */
 
 import { Test, TestingModule } from '@nestjs/testing';
-import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
+import { Logger } from '@nestjs/common';
 import { LdapService } from './ldap.service';
 import { LDAP_OPTIONS } from './ldap.interface';
 
@@ -14,8 +14,8 @@ describe(LdapService.name, () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [],
       providers: [
-        { provide: WINSTON_MODULE_PROVIDER, useValue: serviceMock },
-        { provide: LDAP_OPTIONS, useValue: { options: { cache: false }, domains: [] } },
+        { provide: Logger, useValue: serviceMock },
+        { provide: LDAP_OPTIONS, useValue: { options: {}, cache: false, domains: [] } },
         LdapService,
       ],
     }).compile();

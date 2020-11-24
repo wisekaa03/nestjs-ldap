@@ -2,10 +2,9 @@
 // Copyright 2020 Stanislav V Vyaliy.  All rights reserved.
 
 //#region Imports NPM
-import { DynamicModule, Module, Provider, Type, Global } from '@nestjs/common';
+import { DynamicModule, Module, Provider, Type, Global, Logger } from '@nestjs/common';
 //#endregion
 //#region Imports Local
-// import { ConfigModule } from '@app/config';
 import { LdapService } from './ldap.service';
 import { LDAP_OPTIONS, LdapModuleOptions, LdapModuleAsyncOptions, LdapOptionsFactory } from './ldap.interface';
 //#endregion
@@ -13,7 +12,7 @@ import { LDAP_OPTIONS, LdapModuleOptions, LdapModuleAsyncOptions, LdapOptionsFac
 @Global()
 @Module({
   imports: [],
-  providers: [LdapService],
+  providers: [Logger, LdapService],
   exports: [LdapService],
 })
 export class LdapModule {
@@ -36,6 +35,7 @@ export class LdapModule {
     if (options.useExisting || options.useFactory) {
       return [this.createAsyncOptionsProvider(options)];
     }
+
     return [
       this.createAsyncOptionsProvider(options),
       {
@@ -53,6 +53,7 @@ export class LdapModule {
         inject: options.inject || [],
       };
     }
+
     return {
       provide: LDAP_OPTIONS,
       useFactory: async (optionsFactory: LdapOptionsFactory) => optionsFactory.createLdapOptions(),

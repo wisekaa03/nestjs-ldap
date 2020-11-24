@@ -418,11 +418,6 @@ export interface LdapDomainsConfig extends ClientOptions {
 
 export interface LdapModuleOptions {
   /**
-   * Logger function
-   */
-  logger?: Logger;
-
-  /**
    * Domains config
    */
   domains: LdapDomainsConfig[];

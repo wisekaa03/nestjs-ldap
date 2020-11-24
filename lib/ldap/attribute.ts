@@ -1,13 +1,12 @@
 /** @format */
 // Copyright 2020 Stanislav V Vyaliy.  All rights reserved.
 
-import asn1 from 'asn1';
+import { Ber, BerWriter, BerReader } from 'asn1';
 import { Protocol } from './protocol';
 
 export class Attribute {
-  public _vals?: Record<any, any>;
-
-  public type: any;
+  public _vals?: Record<string, any>;
+  public type: string;
 
   /**
    * Get vals
@@ -55,7 +54,7 @@ export class Attribute {
     };
   }
 
-  constructor(options: Record<any, any> = { type: '' }) {
+  constructor(options: Record<string, any> = { type: '' }) {
     if (options.type && typeof options.type !== 'string') {
       throw new TypeError('options.type must be a string');
     }
@@ -77,7 +76,7 @@ export class Attribute {
     }
   };
 
-  static isAttribute = (attr: Attribute | Record<any, any>): boolean => {
+  static isAttribute = (attr: Attribute | Record<string, unknown>): attr is Attribute => {
     if (attr instanceof Attribute) {
       return true;
     }
@@ -94,7 +93,7 @@ export class Attribute {
     return false;
   };
 
-  static compare = (a: Attribute | Record<any, any>, b: Attribute | Record<any, any>): number => {
+  static compare = (a: Attribute | Record<string, any>, b: Attribute | Record<string, any>): number => {
     if (!Attribute.isAttribute(a) || !Attribute.isAttribute(b)) {
       throw new TypeError('can only compare Attributes');
     }
@@ -104,7 +103,7 @@ export class Attribute {
     if (a.vals.length < b.vals.length) return -1;
     if (a.vals.length > b.vals.length) return 1;
 
-    for (let i = 0; i < a.vals.length; i++) {
+    for (let i = 0; i < a.vals.length; i += 1) {
       if (a.vals[i] < b.vals[i]) return -1;
       if (a.vals[i] > b.vals[i]) return 1;
     }
@@ -112,7 +111,7 @@ export class Attribute {
     return 0;
   };
 
-  parse = (ber: any): boolean => {
+  parse = (ber?: BerReader): boolean => {
     if (!ber) {
       throw new TypeError('ldapjs Attribute parse: ber is undefined');
     }
@@ -123,7 +122,7 @@ export class Attribute {
     if (ber.peek() === Protocol.LBER_SET) {
       if (ber.readSequence(Protocol.LBER_SET)) {
         const end = ber.offset + ber.length;
-        while (ber.offset < end) this._vals?.push(ber.readString(asn1.Ber.OctetString, true));
+        while (ber.offset < end) this._vals?.push(ber.readString(Ber.OctetString, true));
       }
     }
 
@@ -132,7 +131,7 @@ export class Attribute {
 
   toString = (): string => JSON.stringify(this.json);
 
-  toBer = (ber: any): any => {
+  toBer = (ber?: BerWriter): BerWriter => {
     if (!ber) {
       throw new TypeError('ldapjs Attribute toBer: ber is undefined');
     }
@@ -142,9 +141,9 @@ export class Attribute {
     ber.startSequence(Protocol.LBER_SET);
     if (this._vals?.length) {
       this._vals.forEach((b: any) => {
-        ber.writeByte(asn1.Ber.OctetString);
+        ber.writeByte(Ber.OctetString);
         ber.writeLength(b.length);
-        for (let i = 0; i < b.length; i++) ber.writeByte(b[i]);
+        for (let i = 0; i < b.length; i += 1) ber.writeByte(b[i]);
       });
     } else {
       ber.writeStringArray([]);

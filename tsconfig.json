@@ -9,7 +9,7 @@
     "noImplicitAny": false,
     "noImplicitThis": false,
 
-    "inlineSourceMap": true,
+    "sourceMap": true,
     "inlineSources": true,
 
     "outDir": "./dist",

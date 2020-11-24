@@ -15,17 +15,6 @@ import type { LdapModuleOptions, LDAPCache, LdapResponseUser, LdapResponseGroup,
 import { LDAP_OPTIONS } from './ldap.interface';
 import { Change } from './ldap/change';
 import { LdapDomain } from './ldap.class';
-
-export {
-  InsufficientAccessRightsError,
-  InvalidCredentialsError,
-  EntryAlreadyExistsError,
-  NoSuchObjectError,
-  NoSuchAttributeError,
-  ProtocolError,
-  OperationsError,
-  Error as LdapError,
-} from 'ldapjs';
 //#endregion
 
 const LDAP_PASSWORD_NULL = '2058e76c5f3d68e12d7eec7e334fece75b0552edc5348f85c7889404d9211a36';

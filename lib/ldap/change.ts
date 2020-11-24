@@ -1,11 +1,11 @@
 /** @format */
 // Copyright 2020 Stanislav V Vyaliy.  All rights reserved.
 
+import { BerWriter, BerReader } from 'asn1';
 import { Attribute } from './attribute';
 
 export class Change {
-  private _modification: Attribute | Record<any, any>;
-
+  private _modification: Attribute;
   private _operation?: number;
 
   get operation(): 'add' | 'delete' | 'replace' {
@@ -37,12 +37,12 @@ export class Change {
     }
   }
 
-  get modification(): Attribute | Record<any, any> {
+  get modification(): Attribute | Record<string, any> {
     return this._modification;
   }
 
-  set modification(value: Attribute | Record<any, any>) {
-    if (value instanceof Attribute || Attribute.isAttribute(value)) {
+  set modification(value: Attribute | Record<string, any>) {
+    if (Attribute.isAttribute(value)) {
       this._modification = value;
       return;
     }
@@ -66,22 +66,24 @@ export class Change {
     const k = keys[0];
     const _attribute = new Attribute({ type: k });
     if (Array.isArray(value[k])) {
-      value[k].forEach((v: any): void => {
+      value[k].forEach((v: string | Buffer): void => {
         _attribute.addValue(v);
       });
-    } else {
+    } else if (Buffer.isBuffer(value[k])) {
+      _attribute.addValue(value[k]);
+    } else if (value[k] !== undefined && value[k] !== null) {
       _attribute.addValue(value[k]);
     }
     this._modification = _attribute;
   }
 
-  constructor(options: Record<any, any> = { operation: 'add' }) {
-    this._modification = {};
+  constructor(options: Record<string, any> = { operation: 'add' }) {
+    this._modification = new Attribute();
     this.operation = options.operation || options.type || 'add';
     this.modification = options.modification || {};
   }
 
-  isChange = (change: Change | Record<any, any>): boolean => {
+  isChange = (change: Change | Record<string, any>): boolean => {
     if (!change || typeof change !== 'object') {
       return false;
     }
@@ -96,7 +98,7 @@ export class Change {
     return false;
   };
 
-  compare = (a: Change | Record<any, any>, b: Change | Record<any, any>): number => {
+  compare = (a: Change | Record<string, any>, b: Change | Record<string, any>): number => {
     if (!this.isChange(a) || !this.isChange(b)) {
       throw new TypeError('can only compare Changes');
     }
@@ -115,8 +117,8 @@ export class Change {
    * @param {Boolean} scalar convert single-item arrays to scalars. Default: false
    */
   apply = (
-    change: Record<any, any> = { operation: 'add', modification: { type: '' } },
-    object: Record<any, any>,
+    change: Record<string, any> = { operation: 'add', modification: { type: '' } },
+    object: Record<string, any>,
     scalar: any,
   ): any => {
     const { type } = change.modification;
@@ -141,16 +143,12 @@ export class Change {
         break;
       case 'add': {
         // add only new unique entries
-        const newValues = vals.filter((entry: any) => {
-          return !data.includes(entry);
-        });
+        const newValues = vals.filter((entry: any) => !data.includes(entry));
         data = data.concat(newValues);
         break;
       }
       case 'delete':
-        data = data.filter((entry: any) => {
-          return !vals.includes(entry);
-        });
+        data = data.filter((entry: any) => !vals.includes(entry));
         if (data.length === 0) {
           // Erase the attribute if empty
           delete object[type];
@@ -170,7 +168,7 @@ export class Change {
     return object;
   };
 
-  parse = (ber: any): boolean => {
+  parse = (ber?: BerReader): boolean => {
     if (!ber) {
       return false;
     }
@@ -183,20 +181,21 @@ export class Change {
     return true;
   };
 
-  toBer = (ber: any): any => {
+  toBer = (ber?: BerWriter): BerWriter => {
     if (!ber) {
       throw new TypeError('ldapjs Change toBer: ber is undefined');
     }
 
     ber.startSequence();
-    ber.writeEnumeration(this._operation);
+    ber.writeEnumeration(this._operation || 0x00);
+
     ber = this._modification?.toBer(ber);
     ber.endSequence();
 
     return ber;
   };
 
-  json = (): Record<any, any> => ({
+  json = (): Record<string, any> => ({
     operation: this.operation,
     modification: this._modification ? this._modification.json : {},
   });

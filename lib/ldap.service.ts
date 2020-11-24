@@ -191,11 +191,15 @@ export class LdapService {
     cache?: boolean;
     loggerContext?: LoggerContext;
   }): Promise<LdapResponseUser> {
+    if (!domain || !userByDN) {
+      throw new Error(`Arguments domain=${domain}, userByDN=${userByDN}`);
+    }
+
     const cachedID = `dn:${domain}:${userByDN}`;
     if (cache && this.cache) {
       // Check cache. 'cached' is `{password: <hashed-password>, user: <user>}`.
       const cached: LDAPCache = await this.cache.get<LDAPCache>(cachedID);
-      if (cached && cached.user && cached.user.sAMAccountName) {
+      if (cached?.user?.sAMAccountName) {
         this.logger.debug(`From cache: ${cached.user.sAMAccountName}`, {
           context: LdapService.name,
           function: this.searchByDN.name,

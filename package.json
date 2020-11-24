@@ -1,6 +1,6 @@
 {
   "name": "nestjs-ldap",
-  "version": "2.0.10",
+  "version": "2.0.11",
   "description": "NestJS library to access LDAP",
   "author": "Stanislav V Vyaliy",
   "license": "MIT",

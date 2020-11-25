@@ -2,7 +2,7 @@
 // Copyright 2020 Stanislav V Vyaliy.  All rights reserved.
 
 //#region Imports NPM
-import { Inject, Injectable, Logger, LoggerService } from '@nestjs/common';
+import { Inject, Injectable, LoggerService, Logger } from '@nestjs/common';
 import CacheManager from 'cache-manager';
 import RedisStore from 'cache-manager-ioredis';
 import { parse as urlLibParse } from 'url';
@@ -21,6 +21,7 @@ const LDAP_PASSWORD_NULL = '2058e76c5f3d68e12d7eec7e334fece75b0552edc5348f85c788
 export class LdapService {
   public ldapDomains: LdapDomain[];
 
+  private logger: LoggerService;
   private cache?: CacheManager.Cache;
   private cacheSalt: string;
   private cacheTtl: number;
@@ -33,7 +34,9 @@ export class LdapService {
    * @param {ConfigService} configService Config service
    * @constructor
    */
-  constructor(@Inject(LDAP_OPTIONS) private readonly options: LdapModuleOptions, @Inject(Logger) private readonly logger: LoggerService) {
+  constructor(@Inject(LDAP_OPTIONS) private readonly options: LdapModuleOptions) {
+    this.logger = options.logger;
+
     if (options.cacheUrl || options.cache) {
       this.cacheTtl = options.cacheTtl || 600;
       this.cacheSalt = bcrypt.genSaltSync(6);
@@ -85,7 +88,7 @@ export class LdapService {
       this.cacheTtl = 0;
     }
 
-    this.ldapDomains = this.options.domains.map((opts) => new LdapDomain(opts, logger));
+    this.ldapDomains = this.options.domains.map((opts) => new LdapDomain(opts, this.logger));
   }
 
   /**

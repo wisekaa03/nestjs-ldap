@@ -2,7 +2,7 @@
 // Copyright 2020 Stanislav V Vyaliy.  All rights reserved.
 
 //#region Imports NPM
-import type { Logger } from '@nestjs/common';
+import type { LoggerService } from '@nestjs/common';
 import type { ModuleMetadata, Type } from '@nestjs/common/interfaces';
 import type { ClientOptions, SearchEntryObject } from 'ldapjs';
 import type { Redis } from 'ioredis';
@@ -421,6 +421,11 @@ export interface LdapModuleOptions {
    * Domains config
    */
   domains: LdapDomainsConfig[];
+
+  /**
+   * Logging options
+   */
+  logger: LoggerService;
 
   /**
    * If true, then up to 100 credentials at a time will be cached for

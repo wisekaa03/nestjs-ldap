@@ -14,8 +14,8 @@ describe(LdapService.name, () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [],
       providers: [
-        { provide: Logger, useValue: serviceMock },
         { provide: LDAP_OPTIONS, useValue: { options: {}, cache: false, domains: [] } },
+        { provide: Logger, useValue: serviceMock },
         LdapService,
       ],
     }).compile();

@@ -2,7 +2,7 @@
 // Copyright 2020 Stanislav V Vyaliy.  All rights reserved.
 
 //#region Imports NPM
-import { DynamicModule, Module, Provider, Type, Global, Logger } from '@nestjs/common';
+import { DynamicModule, Module, Provider, Type, Global } from '@nestjs/common';
 //#endregion
 //#region Imports Local
 import { LdapService } from './ldap.service';
@@ -12,7 +12,7 @@ import { LDAP_OPTIONS, LdapModuleOptions, LdapModuleAsyncOptions, LdapOptionsFac
 @Global()
 @Module({
   imports: [],
-  providers: [Logger, LdapService],
+  providers: [LdapService],
   exports: [LdapService],
 })
 export class LdapModule {

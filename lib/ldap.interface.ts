@@ -361,7 +361,7 @@ export interface LdapDomainsConfig extends ClientOptions {
   /**
    * LDAP search filter with synchronization.
    */
-  searchFilterAllUsers: string;
+  searchFilterAllUsers?: string;
   /**
    * Scope of the search. Default: 'sub'
    */

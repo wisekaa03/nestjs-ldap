@@ -359,6 +359,11 @@ export interface LdapDomainsConfig extends ClientOptions {
   searchAttributes?: string[];
 
   /**
+   * LDAP synchronization
+   */
+  hideSynchronization?: boolean;
+
+  /**
    * LDAP search filter with synchronization.
    */
   searchFilterAllUsers?: string;

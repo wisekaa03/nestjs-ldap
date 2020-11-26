@@ -252,7 +252,9 @@ export class LdapService {
    * @throws {Error}
    */
   public async synchronization({ loggerContext }: { loggerContext?: LoggerContext }): Promise<Record<string, LdapResponseUser[]>> {
-    const promiseDomain = this.ldapDomains.map(async (domain) => domain.synchronization({ loggerContext }));
+    const promiseDomain = this.ldapDomains
+      .filter((domain) => !domain.hideSynchronization)
+      .map(async (domain) => domain.synchronization({ loggerContext }));
     return Promise.allSettled(promiseDomain).then((promises) =>
       promises.reduce((accumulator, domain) => (domain.status === 'fulfilled' ? { ...accumulator, ...domain.value } : accumulator), {}),
     );
@@ -266,7 +268,9 @@ export class LdapService {
    * @throws {Error}
    */
   public async synchronizationGroups({ loggerContext }: { loggerContext?: LoggerContext }): Promise<Record<string, LdapResponseGroup[]>> {
-    const promiseDomain = this.ldapDomains.map(async (domain) => domain.synchronizationGroups({ loggerContext }));
+    const promiseDomain = this.ldapDomains
+      .filter((domain) => !domain.hideSynchronization)
+      .map(async (domain) => domain.synchronizationGroups({ loggerContext }));
     return Promise.allSettled(promiseDomain).then((promises) =>
       promises.reduce((accumulator, domain) => (domain.status === 'fulfilled' ? { ...accumulator, ...domain.value } : accumulator), {}),
     );

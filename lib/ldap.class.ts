@@ -8,6 +8,7 @@ import { Change } from './ldap/change';
 
 export class LdapDomain extends EventEmitter {
   public domainName: string;
+  public hideSynchronization: boolean;
 
   private clientOpts: Ldap.ClientOptions;
 
@@ -41,6 +42,7 @@ export class LdapDomain extends EventEmitter {
     super();
 
     this.domainName = options.name;
+    this.hideSynchronization = options.hideSynchronization ?? false;
 
     this.clientOpts = {
       url: options.url,
@@ -596,6 +598,10 @@ export class LdapDomain extends EventEmitter {
    * @throws {Error}
    */
   public async synchronization({ loggerContext }: { loggerContext?: LoggerContext }): Promise<Record<string, LdapResponseUser[]>> {
+    if (this.hideSynchronization) {
+      return {};
+    }
+
     const options: Ldap.SearchOptions = {
       filter: this.options.searchFilterAllUsers,
       scope: this.options.searchScopeAllUsers,

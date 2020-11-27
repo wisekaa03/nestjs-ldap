@@ -41,6 +41,7 @@ $ yarn add nestjs-ldap
                 groupSearchFilter: '(&(objectClass=group)(member={{dn}}))',
                 groupSearchScope: 'sub' as Scope,
                 groupDnProperty: 'dn',
+                hideSynchronization: false,
                 searchBaseAllUsers: 'DC=example,DC=local',
                 searchFilterAllUsers: '(&(&(|(&(objectClass=user)(objectCategory=person))(&(objectClass=contact)(objectCategory=person)))))',
                 searchFilterAllGroups: 'objectClass=group',

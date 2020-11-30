@@ -251,12 +251,13 @@ export class LdapService {
    * @returns {Record<string, LdapResponseUser[]>} User in LDAP
    * @throws {Error}
    */
-  public async synchronization({ loggerContext }: { loggerContext?: LoggerContext }): Promise<Record<string, LdapResponseUser[]>> {
-    const promiseDomain = this.ldapDomains
-      .filter((domain) => !domain.hideSynchronization)
-      .map(async (domain) => domain.synchronization({ loggerContext }));
-    return Promise.allSettled(promiseDomain).then((promises) =>
-      promises.reduce((accumulator, domain) => (domain.status === 'fulfilled' ? { ...accumulator, ...domain.value } : accumulator), {}),
+  public async synchronization({
+    loggerContext,
+  }: {
+    loggerContext?: LoggerContext;
+  }): Promise<PromiseSettledResult<Record<string, Error | LdapResponseUser[]>>[]> {
+    return Promise.allSettled(
+      this.ldapDomains.filter((domain) => !domain.hideSynchronization).map(async (domain) => domain.synchronization({ loggerContext })),
     );
   }
 
@@ -267,12 +268,15 @@ export class LdapService {
    * @returns {Record<string, LdapResponseGroup[]>} Group in LDAP
    * @throws {Error}
    */
-  public async synchronizationGroups({ loggerContext }: { loggerContext?: LoggerContext }): Promise<Record<string, LdapResponseGroup[]>> {
-    const promiseDomain = this.ldapDomains
-      .filter((domain) => !domain.hideSynchronization)
-      .map(async (domain) => domain.synchronizationGroups({ loggerContext }));
-    return Promise.allSettled(promiseDomain).then((promises) =>
-      promises.reduce((accumulator, domain) => (domain.status === 'fulfilled' ? { ...accumulator, ...domain.value } : accumulator), {}),
+  public async synchronizationGroups({
+    loggerContext,
+  }: {
+    loggerContext?: LoggerContext;
+  }): Promise<PromiseSettledResult<Record<string, Error | LdapResponseGroup[]>>[]> {
+    return Promise.allSettled(
+      this.ldapDomains
+        .filter((domain) => !domain.hideSynchronization)
+        .map(async (domain) => domain.synchronizationGroups({ loggerContext })),
     );
   }
 

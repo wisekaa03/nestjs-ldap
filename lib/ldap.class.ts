@@ -597,7 +597,7 @@ export class LdapDomain extends EventEmitter {
    * @returns {Record<string, LdapResponseUser[]>} User in LDAP
    * @throws {Error}
    */
-  public async synchronization({ loggerContext }: { loggerContext?: LoggerContext }): Promise<Record<string, LdapResponseUser[]>> {
+  public async synchronization({ loggerContext }: { loggerContext?: LoggerContext }): Promise<Record<string, Error | LdapResponseUser[]>> {
     if (this.hideSynchronization) {
       return {};
     }
@@ -633,7 +633,8 @@ export class LdapDomain extends EventEmitter {
           function: this.synchronization.name,
           ...loggerContext,
         });
-        throw new Error('Synchronize unknown error.');
+
+        return { [this.domainName]: new Error(`${this.domainName}: Synchronize unknown error`) };
       })
       .catch((error: Error | Ldap.Error) => {
         this.logger.error({
@@ -644,7 +645,7 @@ export class LdapDomain extends EventEmitter {
           ...loggerContext,
         });
 
-        throw error;
+        return { [this.domainName]: error };
       });
   }
 
@@ -655,7 +656,11 @@ export class LdapDomain extends EventEmitter {
    * @returns {Record<string, LdapResponseGroup[]>} Group in LDAP
    * @throws {Error}
    */
-  public async synchronizationGroups({ loggerContext }: { loggerContext?: LoggerContext }): Promise<Record<string, LdapResponseGroup[]>> {
+  public async synchronizationGroups({
+    loggerContext,
+  }: {
+    loggerContext?: LoggerContext;
+  }): Promise<Record<string, Error | LdapResponseGroup[]>> {
     const options: Ldap.SearchOptions = {
       filter: this.options.searchFilterAllGroups,
       scope: this.options.groupSearchScope,
@@ -679,24 +684,25 @@ export class LdapDomain extends EventEmitter {
         }
 
         this.logger.error({
-          message: `${this.domainName}: synchronizationGroups: unknown error.`,
+          message: `${this.domainName}: Synchronization groups: unknown error`,
           error: 'Unknown',
           context: LdapDomain.name,
           function: this.synchronizationGroups.name,
           ...loggerContext,
         });
-        throw new Error(`${this.domainName}: synchronizationGroups: unknown error.`);
+
+        return { [this.domainName]: new Error(`${this.domainName}: Synchronization groups: unknown error`) };
       })
       .catch((error: Error) => {
         this.logger.error({
-          message: `${this.domainName}: synchronizationGroups error: ${error.toString()}`,
+          message: `${this.domainName}: Synchronization groups: ${error.toString()}`,
           error,
           context: LdapDomain.name,
           function: this.synchronizationGroups.name,
           ...loggerContext,
         });
 
-        throw error;
+        return { [this.domainName]: error };
       });
   }
 

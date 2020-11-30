@@ -251,14 +251,10 @@ export class LdapService {
    * @returns {Record<string, LdapResponseUser[]>} User in LDAP
    * @throws {Error}
    */
-  public async synchronization({
-    loggerContext,
-  }: {
-    loggerContext?: LoggerContext;
-  }): Promise<PromiseSettledResult<Record<string, Error | LdapResponseUser[]>>[]> {
-    return Promise.allSettled(
+  public async synchronization({ loggerContext }: { loggerContext?: LoggerContext }): Promise<Record<string, Error | LdapResponseUser[]>> {
+    return Promise.all(
       this.ldapDomains.filter((domain) => !domain.hideSynchronization).map(async (domain) => domain.synchronization({ loggerContext })),
-    );
+    ).then((promise) => promise.reduce((accumulator, domain) => ({ ...accumulator, ...domain }), {}));
   }
 
   /**
@@ -272,12 +268,12 @@ export class LdapService {
     loggerContext,
   }: {
     loggerContext?: LoggerContext;
-  }): Promise<PromiseSettledResult<Record<string, Error | LdapResponseGroup[]>>[]> {
-    return Promise.allSettled(
+  }): Promise<Record<string, Error | LdapResponseGroup[]>> {
+    return Promise.all(
       this.ldapDomains
         .filter((domain) => !domain.hideSynchronization)
         .map(async (domain) => domain.synchronizationGroups({ loggerContext })),
-    );
+    ).then((promise) => promise.reduce((accumulator, domain) => ({ ...accumulator, ...domain }), {}));
   }
 
   /**

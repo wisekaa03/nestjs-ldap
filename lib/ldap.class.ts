@@ -215,13 +215,6 @@ export class LdapDomain extends EventEmitter {
       throw new Error(`${this.domainName}: bindDN is undefined`);
     }
 
-    this.logger.debug!({
-      message: `${this.domainName}: bind: ${this.bindDN} ...`,
-      context: LdapDomain.name,
-      function: this.onConnectAdmin.name,
-      ...loggerContext,
-    });
-
     return new Promise<boolean>((resolve, reject) =>
       this.adminClient.bind(this.bindDN, this.bindCredentials, (error) => {
         if (error) {
@@ -237,12 +230,6 @@ export class LdapDomain extends EventEmitter {
           return reject(error);
         }
 
-        this.logger.debug!({
-          message: `${this.domainName}: bind ok`,
-          context: LdapDomain.name,
-          function: this.onConnectAdmin.name,
-          ...loggerContext,
-        });
         this.adminBound = true;
         if (this.options.reconnect) {
           this.emit('installReconnectListener');

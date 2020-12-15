@@ -197,8 +197,8 @@ export interface LdapResponseUser {
   // Object GUID - ID in ldap
   'objectGUID': string;
 
-  // Other telephone
-  'otherTelephone': string;
+  // Other telephones
+  'otherTelephone': string[];
 
   // Postal code
   'postalCode': string;

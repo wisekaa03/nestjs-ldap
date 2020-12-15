@@ -608,7 +608,7 @@ export class LdapDomain extends EventEmitter {
     })
       .then(async (sync) => {
         if (sync) {
-          await Promise.allSettled(sync.map(async (u) => this.getGroups({ user: u, loggerContext })));
+          await Promise.allSettled(sync.map((user) => this.getGroups({ user, loggerContext })));
 
           return { [this.domainName]: (sync as unknown) as LdapResponseUser[] };
         }
@@ -637,7 +637,7 @@ export class LdapDomain extends EventEmitter {
   }
 
   /**
-   * Synchronize users
+   * Synchronize groups
    *
    * @async
    * @returns {Record<string, LdapResponseGroup[]>} Group in LDAP

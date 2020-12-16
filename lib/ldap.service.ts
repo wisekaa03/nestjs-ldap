@@ -9,7 +9,7 @@ import { parse as urlLibParse } from 'url';
 import bcrypt from 'bcrypt';
 //#endregion
 //#region Imports Local
-import type { LdapModuleOptions, LDAPCache, LdapResponseUser, LdapResponseGroup, LDAPAddEntry, LoggerContext } from './ldap.interface';
+import type { LdapModuleOptions, LDAPCache, LdapResponseUser, LdapResponseGroup, LdapAddEntry, LoggerContext } from './ldap.interface';
 import { LDAP_OPTIONS } from './ldap.interface';
 import { Change } from './ldap/change';
 import { LdapDomain } from './ldap.class';
@@ -74,13 +74,13 @@ export class LdapService {
         this.logger.debug!({
           message: 'Redis connection: success',
           context: LdapService.name,
-          function: this.constructor.name,
+          function: 'constructor',
         });
       } else {
         this.logger.error({
           message: 'Redis connection: some error',
           context: LdapService.name,
-          function: this.constructor.name,
+          function: 'constructor',
         });
       }
     } else {
@@ -99,17 +99,17 @@ export class LdapService {
    * @returns {Promise<LdapResponseUser>} User in LDAP
    */
   public async searchByUsername({
-    userByUsername,
+    username,
     domain,
     cache = true,
     loggerContext,
   }: {
-    userByUsername: string;
+    username: string;
     domain: string;
     cache?: boolean;
     loggerContext?: LoggerContext;
-  }): Promise<LdapResponseUser> {
-    const cachedID = `user:${domain}:${userByUsername}`;
+  }): Promise<LdapResponseUser | undefined> {
+    const cachedID = `user:${domain}:${username}`;
 
     if (cache && this.cache) {
       // Check cache. 'cached' is `{password: <hashed-password>, user: <user>}`.
@@ -118,7 +118,7 @@ export class LdapService {
         this.logger.debug!({
           message: `From cache: ${cached.user.sAMAccountName}`,
           context: LdapService.name,
-          function: this.searchByUsername.name,
+          function: 'searchByUsername',
           ...loggerContext,
         });
 
@@ -131,18 +131,18 @@ export class LdapService {
       this.logger.debug!({
         message: `Domain does not exist: ${domain}`,
         context: LdapService.name,
-        function: this.searchByUsername.name,
+        function: 'searchByUsername',
         ...loggerContext,
       });
       throw new Error(`Domain does not exist: ${domain}`);
     }
 
-    return domainLdap.searchByUsername({ userByUsername, loggerContext }).then((user) => {
+    return domainLdap.searchByUsername({ username, loggerContext }).then((user) => {
       if (user && this.cache) {
         this.logger.debug!({
           message: `To cache from domain ${domain}: ${user.dn}`,
           context: LdapService.name,
-          function: this.searchByUsername.name,
+          function: 'searchByUsername',
           ...loggerContext,
         });
         this.cache.set<LDAPCache>(`dn:${domain}:${user.dn}`, { user, password: LDAP_PASSWORD_NULL }, { ttl: this.cacheTtl });
@@ -151,7 +151,7 @@ export class LdapService {
           this.logger.debug!({
             message: `To cache from domain ${domain}: ${user.sAMAccountName}`,
             context: LdapService.name,
-            function: this.searchByUsername.name,
+            function: 'searchByUsername',
             ...loggerContext,
           });
           this.cache.set<LDAPCache>(
@@ -174,29 +174,29 @@ export class LdapService {
    * @returns {Promise<LdapResponseUser>} User in LDAP
    */
   public async searchByDN({
-    userByDN,
+    dn,
     domain,
     cache = true,
     loggerContext,
   }: {
-    userByDN: string;
+    dn: string;
     domain: string;
     cache?: boolean;
     loggerContext?: LoggerContext;
   }): Promise<LdapResponseUser> {
-    if (!domain || !userByDN) {
-      throw new Error(`Arguments domain=${domain}, userByDN=${userByDN}`);
+    if (!domain || !dn) {
+      throw new Error(`Arguments domain=${domain}, userByDN=${dn}`);
     }
 
-    const cachedID = `dn:${domain}:${userByDN}`;
+    const cachedID = `dn:${domain}:${dn}`;
     if (cache && this.cache) {
       // Check cache. 'cached' is `{password: <hashed-password>, user: <user>}`.
       const cached: LDAPCache = await this.cache.get<LDAPCache>(cachedID);
-      if (cached?.user?.sAMAccountName) {
+      if (cached?.user.dn) {
         this.logger.debug!({
-          message: `From cache: ${cached.user.sAMAccountName}`,
+          message: `From cache: ${cached.user.dn}`,
           context: LdapService.name,
-          function: this.searchByDN.name,
+          function: 'searchByDN',
           ...loggerContext,
         });
 
@@ -209,27 +209,27 @@ export class LdapService {
       this.logger.debug!({
         message: `Domain does not exist: ${domain}`,
         context: LdapService.name,
-        function: this.searchByDN.name,
+        function: 'searchByDN',
         ...loggerContext,
       });
       throw new Error(`Domain does not exist: ${domain}`);
     }
 
-    return domainLdap.searchByDN({ userByDN, loggerContext }).then((user) => {
+    return domainLdap.searchByDN({ dn, loggerContext }).then((user) => {
       if (user && this.cache) {
         this.logger.debug!({
-          message: `To cache from domain ${domain}: ${userByDN}`,
+          message: `To cache, domain "${domain}": ${user.dn}`,
           context: LdapService.name,
-          function: this.searchByDN.name,
+          function: 'searchByDN',
           ...loggerContext,
         });
         this.cache.set<LDAPCache>(cachedID, { user, password: LDAP_PASSWORD_NULL }, { ttl: this.cacheTtl });
 
         if (user.sAMAccountName) {
           this.logger.debug!({
-            message: `To cache from domain ${domain}: ${user.sAMAccountName}`,
+            message: `To cache, domain "${domain}": ${user.sAMAccountName}`,
             context: LdapService.name,
-            function: this.searchByDN.name,
+            function: 'searchByDN',
             ...loggerContext,
           });
           this.cache.set<LDAPCache>(
@@ -308,7 +308,7 @@ export class LdapService {
       this.logger.debug!({
         message: `Domain does not exist: ${domain}`,
         context: LdapService.name,
-        function: this.modify.name,
+        function: 'modify',
         ...loggerContext,
       });
       throw new Error(`Domain does not exist: ${domain}`);
@@ -345,7 +345,7 @@ export class LdapService {
         message: `${domain}: No password given`,
         error: `${domain}: No password given`,
         context: LdapService.name,
-        function: this.authenticate.name,
+        function: 'authenticate',
         ...loggerContext,
       });
       throw new Error('No password given');
@@ -356,7 +356,7 @@ export class LdapService {
       this.logger.debug!({
         message: `Domain does not exist: ${domain}`,
         context: LdapService.name,
-        function: this.authenticate.name,
+        function: 'authenticate',
         ...loggerContext,
       });
       throw new Error(`Domain does not exist: ${domain}`);
@@ -370,7 +370,7 @@ export class LdapService {
         this.logger.debug!({
           message: `From cache ${domain}: ${cached.user.sAMAccountName}`,
           context: LdapService.name,
-          function: this.authenticate.name,
+          function: 'authenticate',
           ...loggerContext,
         });
 
@@ -385,7 +385,7 @@ export class LdapService {
               this.logger.debug!({
                 message: `To cache from domain ${domain}: ${user.sAMAccountName}`,
                 context: LdapService.name,
-                function: this.authenticate.name,
+                function: 'authenticate',
                 ...loggerContext,
               });
 
@@ -403,7 +403,7 @@ export class LdapService {
               message: `LDAP auth error [${domain}]: ${error.toString()}`,
               error,
               context: LdapService.name,
-              function: this.authenticate.name,
+              function: 'authenticate',
               ...loggerContext,
             });
           }
@@ -424,7 +424,7 @@ export class LdapService {
           this.logger.debug!({
             message: `To cache from domain ${domain}: ${user.sAMAccountName}`,
             context: LdapService.name,
-            function: this.authenticate.name,
+            function: 'authenticate',
             ...loggerContext,
           });
 
@@ -476,7 +476,7 @@ export class LdapService {
     domain,
     loggerContext,
   }: {
-    entry: LDAPAddEntry;
+    entry: LdapAddEntry;
     domain: string;
     loggerContext?: LoggerContext;
   }): Promise<LdapResponseUser> {
@@ -485,7 +485,7 @@ export class LdapService {
       this.logger.debug!({
         message: `Domain does not exist: ${domain}`,
         context: LdapService.name,
-        function: this.searchByUsername.name,
+        function: 'add',
         ...loggerContext,
       });
       throw new Error(`Domain does not exist: ${domain}`);

@@ -16,8 +16,7 @@ export type Scope = 'base' | 'one' | 'sub';
 export interface LoggerContext {
   [key: string]: string | unknown | null;
 }
-
-export interface LDAPAddEntry {
+export interface LdapAddEntry {
   /**
    * Common name
    */
@@ -31,12 +30,24 @@ export interface LDAPAddEntry {
 
   [p: string]: undefined | string | string[] | Record<string, string> | Buffer;
 }
+// deprecated
+export type LDAPAddEntry = LdapAddEntry;
 
-export interface LdapResponseGroup {
+export type LdapResponseObject = SearchEntryObject & {
   /**
-   * Domain of this group
+   * Domain of this user
    */
-  loginDomain?: string;
+  loginDomain: string;
+
+  /**
+   * DN
+   */
+  dn: string;
+
+  /**
+   * Distinguished name
+   */
+  distinguishedName: string;
 
   /**
    * Common name
@@ -49,17 +60,20 @@ export interface LdapResponseGroup {
   description: string;
 
   /**
-   * DN
+   * Display name
    */
-  dn: string;
+  displayName: string;
 
   /**
-   * Distinguished name
+   * Name
    */
-  distinguishedName: string;
-
-  // Name
   name: string;
+
+  // Object category
+  objectCategory: string;
+  objectClass: string[];
+  // Object GUID - ID in ldap
+  objectGUID: string;
 
   /**
    * SAM account name
@@ -68,42 +82,22 @@ export interface LdapResponseGroup {
 
   sAMAccountType: string;
 
-  // Object category
-  objectCategory: string;
-  objectClass: string[];
-
-  // Object GUID - ID in ldap
-  objectGUID: string;
-
   whenChanged: Date;
   whenCreated: Date;
-}
+};
 
-export interface LdapResponseUser {
-  /**
-   * Domain of this user
-   */
-  'loginDomain'?: string;
+export type LdapResponseGroup = LdapResponseObject;
 
-  /**
-   * DN
-   */
-  'dn': string;
-
+export type LdapResponseUser = LdapResponseObject & {
   /**
    * Ldap response groups
    */
-  'groups'?: LdapResponseGroup[];
+  'groups': LdapResponseGroup[];
 
   /**
    * Country
    */
   'c': string;
-
-  /**
-   * Common name
-   */
-  'cn': string;
 
   /**
    * Country expanded
@@ -129,21 +123,6 @@ export interface LdapResponseUser {
    * Department name
    */
   'department': string;
-
-  /**
-   * Description
-   */
-  'description': string;
-
-  /**
-   * Display name
-   */
-  'displayName': string;
-
-  /**
-   * Distinguished name
-   */
-  'distinguishedName': string;
 
   /**
    * Employee ID
@@ -186,17 +165,6 @@ export interface LdapResponseUser {
   // Manager Profile ?
   'manager': string;
 
-  // Name
-  'name': string;
-
-  // Object category
-  'objectCategory': string;
-
-  'objectClass': string[];
-
-  // Object GUID - ID in ldap
-  'objectGUID': string;
-
   // Other telephones
   'otherTelephone': string[];
 
@@ -207,13 +175,6 @@ export interface LdapResponseUser {
    * Office name
    */
   'physicalDeliveryOfficeName': string;
-
-  /**
-   * SAM account name
-   */
-  'sAMAccountName': string;
-
-  'sAMAccountType': string;
 
   /**
    * Family name
@@ -263,8 +224,6 @@ export interface LdapResponseUser {
 
   'userPrincipalName': string;
 
-  'whenChanged'?: Date;
-  'whenCreated'?: Date;
   'badPasswordTime'?: Date;
   'badPwdCount'?: number;
 
@@ -303,7 +262,7 @@ export interface LdapResponseUser {
   'msDS-cloudExtensionAttribute18'?: string;
   'msDS-cloudExtensionAttribute19'?: string;
   'msDS-cloudExtensionAttribute20'?: string;
-}
+};
 
 interface GroupSearchFilterFunction {
   /**

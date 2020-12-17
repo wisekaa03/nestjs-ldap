@@ -871,7 +871,7 @@ export class LdapDomain extends EventEmitter {
             try {
               foundUser.groups = await this.getGroups({ user: foundUser, loggerContext });
 
-              return foundUser;
+              return resolve(foundUser);
             } catch (error) {
               this.logger.error({
                 message: `${this.domainName}: Authenticate error: ${error.toString()}`,

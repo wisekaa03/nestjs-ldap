@@ -33,16 +33,16 @@ export interface LdapAddEntry {
 // deprecated
 export type LDAPAddEntry = LdapAddEntry;
 
-export type LdapResponseObject = SearchEntryObject & {
+declare module 'ldapjs' {
+  export interface SearchEntryObject {
+    [p: string]: string | string[] | unknown;
+  }
+}
+export interface LdapResponseObject extends Pick<SearchEntryObject, 'dn' | 'controls'> {
   /**
    * Domain of this user
    */
   loginDomain: string;
-
-  /**
-   * DN
-   */
-  dn: string;
 
   /**
    * Distinguished name
@@ -79,16 +79,15 @@ export type LdapResponseObject = SearchEntryObject & {
    * SAM account name
    */
   sAMAccountName: string;
-
   sAMAccountType: string;
 
   whenChanged: Date;
   whenCreated: Date;
-};
+}
 
 export type LdapResponseGroup = LdapResponseObject;
 
-export type LdapResponseUser = LdapResponseObject & {
+export interface LdapResponseUser extends LdapResponseObject {
   /**
    * Ldap response groups
    */
@@ -127,9 +126,9 @@ export type LdapResponseUser = LdapResponseObject & {
   /**
    * Employee ID
    */
-  'employeeID'?: string;
-  'employeeNumber'?: string;
-  'employeeType'?: string;
+  'employeeID': string;
+  'employeeNumber': string;
+  'employeeType': string;
 
   /**
    * Given name
@@ -211,7 +210,7 @@ export type LdapResponseUser = LdapResponseObject & {
    */
   'jpegPhoto': string[];
 
-  'carLicense'?: string;
+  'carLicense': string;
 
   /**
    * Work title
@@ -224,16 +223,16 @@ export type LdapResponseUser = LdapResponseObject & {
 
   'userPrincipalName': string;
 
-  'badPasswordTime'?: Date;
-  'badPwdCount'?: number;
+  'badPasswordTime': Date;
+  'badPwdCount': number;
 
   // Logon, logoff
-  'logonCount'?: number;
-  'lastLogoff'?: Date;
-  'lastLogon'?: Date;
-  'lastLogonTimestamp'?: Date;
+  'logonCount': number;
+  'lastLogoff': Date;
+  'lastLogon': Date;
+  'lastLogonTimestamp': Date;
 
-  'pwdLastSet'?: Date;
+  'pwdLastSet': Date;
 
   /* Active Directory */
   'msDS-cloudExtensionAttribute1'?: string;
@@ -262,7 +261,7 @@ export type LdapResponseUser = LdapResponseObject & {
   'msDS-cloudExtensionAttribute18'?: string;
   'msDS-cloudExtensionAttribute19'?: string;
   'msDS-cloudExtensionAttribute20'?: string;
-};
+}
 
 interface GroupSearchFilterFunction {
   /**
@@ -270,7 +269,7 @@ interface GroupSearchFilterFunction {
    *
    * @param user The user retrieved and authenticated from LDAP
    */
-  (user: SearchEntryObject): string;
+  (user: LdapResponseUser): string;
 }
 
 export interface LdapDomainsConfig extends ClientOptions {

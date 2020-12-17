@@ -84,14 +84,14 @@ export class LdapDomain extends EventEmitter {
       if (typeof options.groupSearchFilter === 'string') {
         const { groupSearchFilter } = options;
         // eslint-disable-next-line no-param-reassign
-        options.groupSearchFilter = (user: Ldap.SearchEntryObject): string =>
+        options.groupSearchFilter = (user: LdapResponseUser): string =>
           groupSearchFilter
             .replace(
               /{{dn}}/g,
               (options.groupDnProperty && (user[options.groupDnProperty] as string))?.replace(/\(/, '\\(')?.replace(/\)/, '\\)') ||
                 'undefined',
             )
-            .replace(/{{username}}/g, user.sAMAccountName as string);
+            .replace(/{{username}}/g, user.sAMAccountName);
       }
 
       this.getGroups = this.findGroups;

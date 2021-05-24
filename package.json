@@ -27,10 +27,10 @@
   "dependencies": {
     "@nestjs/common": "7.6.17",
     "bcrypt": "5.0.1",
-    "cache-manager": "^3.4.3",
+    "cache-manager": "3.4.3",
     "cache-manager-ioredis": "2.1.0",
-    "ldapjs": "^2.2.4",
-    "rxjs": "^6",
+    "ldapjs": "2.2.4",
+    "rxjs": "6.6.7",
     "url": "0.11.0"
   },
   "devDependencies": {

@@ -113,7 +113,7 @@ export class LdapService {
 
     if (cache && this.cache) {
       // Check cache. 'cached' is `{password: <hashed-password>, user: <user>}`.
-      const cached: LDAPCache = await this.cache.get<LDAPCache>(cachedID);
+      const cached = await this.cache.get<LDAPCache>(cachedID);
       if (cached && cached.user && cached.user.sAMAccountName) {
         this.logger.debug!({
           message: `From cache: ${cached.user.sAMAccountName}`,
@@ -191,7 +191,7 @@ export class LdapService {
     const cachedID = `dn:${domain}:${dn}`;
     if (cache && this.cache) {
       // Check cache. 'cached' is `{password: <hashed-password>, user: <user>}`.
-      const cached: LDAPCache = await this.cache.get<LDAPCache>(cachedID);
+      const cached = await this.cache.get<LDAPCache>(cachedID);
       if (cached?.user.dn) {
         this.logger.debug!({
           message: `From cache: ${cached.user.dn}`,
@@ -365,7 +365,7 @@ export class LdapService {
     const cachedID = `user:${domain}:${username}`;
     if (cache && this.cache) {
       // Check cache. 'cached' is `{password: <hashed-password>, user: <user>}`.
-      const cached: LDAPCache = await this.cache.get<LDAPCache>(cachedID);
+      const cached = await this.cache.get<LDAPCache>(cachedID);
       if (cached?.user?.sAMAccountName && (cached?.password === LDAP_PASSWORD_NULL || bcrypt.compareSync(password, cached.password))) {
         this.logger.debug!({
           message: `From cache ${domain}: ${cached.user.sAMAccountName}`,

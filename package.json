@@ -29,7 +29,7 @@
     "bcrypt": "5.0.1",
     "cache-manager": "^3.4.3",
     "cache-manager-ioredis": "2.1.0",
-    "ldapjs": "^2.2.4",
+    "ldapjs": "2.3.0",
     "rxjs": "^6",
     "url": "0.11.0"
   },

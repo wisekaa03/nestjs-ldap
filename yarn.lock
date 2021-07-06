@@ -717,10 +717,10 @@
   resolved "https://registry.yarnpkg.com/@types/json5/-/json5-0.0.29.tgz#ee28707ae94e11d2b827bcbe5270bcea7f3e71ee"
   integrity sha1-7ihweulOEdK4J7y+UnC86n8+ce4=
 
-"@types/ldapjs@1.0.10":
-  version "1.0.10"
-  resolved "https://registry.yarnpkg.com/@types/ldapjs/-/ldapjs-1.0.10.tgz#bac705c9e154b97d69496b5213cc28dbe9715a37"
-  integrity sha512-AMkMxkK/wjYtWebNH2O+rARfo7scBpW3T23g6zmGCwDgbyDbR79XWpcSqhPWdU+fChaF+I3dVyl9X2dT1CyI9w==
+"@types/ldapjs@1.0.11":
+  version "1.0.11"
+  resolved "https://registry.yarnpkg.com/@types/ldapjs/-/ldapjs-1.0.11.tgz#34077176af2b06186bd54e4a38ceb6e852387fa4"
+  integrity sha512-O4D1frY6xy2mQr5WouNPeltMe5EHdmU4FxbLDC6TMDX5HXOuafusGu+7Y9WAoqBaYHZ5hcFa7jfkpggyexfeXQ==
   dependencies:
     "@types/node" "*"
 

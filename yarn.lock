@@ -661,10 +661,10 @@
   dependencies:
     "@types/node" "*"
 
-"@types/cache-manager-ioredis@2.0.1":
-  version "2.0.1"
-  resolved "https://registry.yarnpkg.com/@types/cache-manager-ioredis/-/cache-manager-ioredis-2.0.1.tgz#04564ca52ba63bd20ae693ee6185469aab092507"
-  integrity sha512-ggkb4cxAhT4jv/2sZaEvUTQqlTaE76ZFdqUzgv/I/4i3SSjKOYH9yC98wVwALzSkanzXT6psg/+TNyjaWWZZXA==
+"@types/cache-manager-ioredis@2.0.2":
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/@types/cache-manager-ioredis/-/cache-manager-ioredis-2.0.2.tgz#d50e9074ba410744396a631d5474023a5ce4079c"
+  integrity sha512-mcn1k5bCJ/iAIymLRq4d6KSvEdrdspuo8KEIIPkPEl5WP+2CC7NWtRJmgFBoNqCgNxr++B62kOmIH1HYXAiBdA==
   dependencies:
     "@types/cache-manager" "*"
     "@types/ioredis" "*"

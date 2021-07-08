@@ -39,7 +39,7 @@
     "@types/asn1": "0.2.0",
     "@types/bcrypt": "5.0.0",
     "@types/cache-manager": "3.4.0",
-    "@types/cache-manager-ioredis": "2.0.1",
+    "@types/cache-manager-ioredis": "2.0.2",
     "@types/ldapjs": "1.0.10",
     "@types/node": "15.6.0",
     "@typescript-eslint/eslint-plugin": "4.24.0",

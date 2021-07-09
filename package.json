@@ -27,7 +27,7 @@
   "dependencies": {
     "@nestjs/common": "7.6.17",
     "bcrypt": "5.0.1",
-    "cache-manager": "^3.4.3",
+    "cache-manager": "3.4.4",
     "cache-manager-ioredis": "2.1.0",
     "ldapjs": "^2.2.4",
     "rxjs": "^6",
@@ -38,7 +38,7 @@
     "@nestjs/testing": "7.6.17",
     "@types/asn1": "0.2.0",
     "@types/bcrypt": "5.0.0",
-    "@types/cache-manager": "3.4.0",
+    "@types/cache-manager": "3.4.2",
     "@types/cache-manager-ioredis": "2.0.1",
     "@types/ldapjs": "1.0.10",
     "@types/node": "15.6.0",

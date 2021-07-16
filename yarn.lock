@@ -717,10 +717,10 @@
   resolved "https://registry.yarnpkg.com/@types/json5/-/json5-0.0.29.tgz#ee28707ae94e11d2b827bcbe5270bcea7f3e71ee"
   integrity sha1-7ihweulOEdK4J7y+UnC86n8+ce4=
 
-"@types/ldapjs@1.0.10":
-  version "1.0.10"
-  resolved "https://registry.yarnpkg.com/@types/ldapjs/-/ldapjs-1.0.10.tgz#bac705c9e154b97d69496b5213cc28dbe9715a37"
-  integrity sha512-AMkMxkK/wjYtWebNH2O+rARfo7scBpW3T23g6zmGCwDgbyDbR79XWpcSqhPWdU+fChaF+I3dVyl9X2dT1CyI9w==
+"@types/ldapjs@2.2.0":
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/@types/ldapjs/-/ldapjs-2.2.0.tgz#43ff78668c420b69a61b93e0acde71ddc0c7766d"
+  integrity sha512-L6ObSryRGOw0qYmN9B4w4s8UkoyRbxoWh7C1vc/Z6O/VXJQJqGBSyZPXRDmgKF+TZVGq/F7H37t0Cxrm+hLiRA==
   dependencies:
     "@types/node" "*"
 
@@ -3383,10 +3383,10 @@ ldap-filter@^0.3.3:
   dependencies:
     assert-plus "^1.0.0"
 
-ldapjs@^2.2.4:
-  version "2.2.4"
-  resolved "https://registry.yarnpkg.com/ldapjs/-/ldapjs-2.2.4.tgz#d4e3f4ae2277b6e760a83ebd61f7f5c4097c446b"
-  integrity sha512-OoeAXPNPPt4D6qva2/p6rkCIHknyYFd42Vp8JhSazBs9BbkEBmoajzj2F0ElD3vR+yAuzIVCjqh1W4uR8dfn0A==
+ldapjs@2.3.0:
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/ldapjs/-/ldapjs-2.3.0.tgz#999c85f642216709009dc8728e58ac7793888def"
+  integrity sha512-3Rbm3CS7vzTccpP1QnzKCEPok60L/b3BFlWU8r93P5oadCAaqCWEH9Td08crPnw4Ti20W8y0+ZKtFFNzxVu4kA==
   dependencies:
     abstract-logging "^2.0.0"
     asn1 "^0.2.4"

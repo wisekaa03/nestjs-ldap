@@ -2,27 +2,14 @@
 
 module.exports = {
   parser: '@typescript-eslint/parser',
-  plugins: ['@typescript-eslint', 'import'],
+  plugins: ['@typescript-eslint'],
   extends: [
     'plugin:@typescript-eslint/eslint-recommended',
     'plugin:@typescript-eslint/recommended',
     'plugin:jest/recommended',
     'prettier',
     'plugin:prettier/recommended',
-    'airbnb',
   ],
-  settings: {
-    'import/resolver': {
-      typescript: {
-        // alwaysTryTypes: true,
-        project: ['tsconfig.json'],
-      },
-      node: {
-        extensions: ['.ts', '.tsx', '.js', '.jsx'],
-      },
-    },
-    'import/ignore': ['\\.coffee$', '\\.(scss|less|css)$', '\\.(svg|png|jpe?g|webp|gif)(\\?.*)?$'],
-  },
   globals: {
     window: true,
     document: true,
@@ -32,8 +19,6 @@ module.exports = {
   },
   parserOptions: {
     sourceType: 'module',
-    jsx: true,
-    useJSXTextNode: true,
     ecmaVersion: 2020,
     ecmaFeatures: {
       jsx: true,
@@ -62,22 +47,11 @@ module.exports = {
     'no-nested-ternary': 0,
     'spaced-comment': ['error', 'always', { markers: ['#region', '#endregion', '/'] }],
     'max-len': ['error', { code: 140, ignoreUrls: true }],
-    'import/no-extraneous-dependencies': 0,
     'no-unused-vars': [
       'warn',
       {
         argsIgnorePattern: '^(_|[A-Z]+)',
         varsIgnorePattern: '^(_|[A-Z]+)',
-      },
-    ],
-    'import/extensions': [
-      'error',
-      'ignorePackages',
-      {
-        js: 'never',
-        jsx: 'never',
-        ts: 'never',
-        tsx: 'never',
       },
     ],
     'prettier/prettier': [
@@ -111,17 +85,8 @@ module.exports = {
         varsIgnorePattern: '^(_|[A-Z]+)',
       },
     ],
-    'react/require-default-props': 0,
-    'react/jsx-curly-newline': 0,
     'no-use-before-define': 0,
-    'jsx-a11y/anchor-is-valid': 0,
     'no-useless-constructor': 0,
-    'react/jsx-one-expression-per-line': 0,
-    'react/jsx-wrap-multilines': 0,
-    'react/prop-types': 0,
-    'react/static-property-placement': 0,
-    'react/jsx-filename-extension': [1, { extensions: ['.js', '.jsx', '.tsx', '.ts'] }],
-    'react/jsx-props-no-spreading': 0,
     // '@typescript-eslint/no-var-requires': 0,
   },
 };

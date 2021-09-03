@@ -19,6 +19,15 @@ declare namespace NodeJS {
   }
 }
 
+export declare global {
+  interface globalThis {
+    __SERVER__?: boolean;
+    __DEV__?: boolean;
+    __PRODUCTION__?: boolean;
+    __TEST__?: boolean;
+  }
+}
+
 declare module '*.woff2' {
   const content: string;
   const className: string;

@@ -399,8 +399,9 @@ export class LdapService {
               );
             }
           } catch (error) {
+            const errorMessage = error instanceof Error ? error.toString() : JSON.stringify(error);
             this.logger.error({
-              message: `LDAP auth error [${domain}]: ${error.toString()}`,
+              message: `LDAP auth error [${domain}]: ${errorMessage}`,
               error,
               context: LdapService.name,
               function: 'authenticate',

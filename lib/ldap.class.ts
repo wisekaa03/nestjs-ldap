@@ -728,45 +728,7 @@ export class LdapDomain extends EventEmitter {
                 return reject(error);
               }
 
-              return this.userClient.modify(
-                dn,
-                data,
-                async (searchError: Ldap.Error | null): Promise<void> => {
-                  if (searchError) {
-                    this.logger.error({
-                      message: `${this.domainName}: Modify error "${dn}": ${searchError.toString()}`,
-                      error: searchError,
-                      context: LdapDomain.name,
-                      function: 'modify',
-                      ...loggerContext,
-                    });
-
-                    reject(searchError);
-                  }
-
-                  this.logger.debug!({
-                    message: `${this.domainName}: Modify success "${dn}"`,
-                    context: LdapDomain.name,
-                    function: 'modify',
-                    ...loggerContext,
-                  });
-
-                  resolve(true);
-                },
-              );
-            });
-          } else {
-            this.adminClient.modify(
-              dn,
-              data,
-              async (searchError: Ldap.Error | null): Promise<void> => {
-                data.forEach((d, i, a) => {
-                  if (d.modification.type === 'thumbnailPhoto' || d.modification.type === 'jpegPhoto') {
-                    // eslint-disable-next-line no-param-reassign
-                    a[i].modification.vals = '...skipped...';
-                  }
-                });
-
+              return this.userClient.modify(dn, data, async (searchError: Ldap.Error | null): Promise<void> => {
                 if (searchError) {
                   this.logger.error({
                     message: `${this.domainName}: Modify error "${dn}": ${searchError.toString()}`,
@@ -777,19 +739,49 @@ export class LdapDomain extends EventEmitter {
                   });
 
                   reject(searchError);
-                  return;
                 }
 
                 this.logger.debug!({
-                  message: `${this.domainName}: Modify success "${dn}": ${JSON.stringify(data)}`,
+                  message: `${this.domainName}: Modify success "${dn}"`,
                   context: LdapDomain.name,
                   function: 'modify',
                   ...loggerContext,
                 });
 
                 resolve(true);
-              },
-            );
+              });
+            });
+          } else {
+            this.adminClient.modify(dn, data, async (searchError: Ldap.Error | null): Promise<void> => {
+              data.forEach((d, i, a) => {
+                if (d.modification.type === 'thumbnailPhoto' || d.modification.type === 'jpegPhoto') {
+                  // eslint-disable-next-line no-param-reassign
+                  a[i].modification.vals = '...skipped...';
+                }
+              });
+
+              if (searchError) {
+                this.logger.error({
+                  message: `${this.domainName}: Modify error "${dn}": ${searchError.toString()}`,
+                  error: searchError,
+                  context: LdapDomain.name,
+                  function: 'modify',
+                  ...loggerContext,
+                });
+
+                reject(searchError);
+                return;
+              }
+
+              this.logger.debug!({
+                message: `${this.domainName}: Modify success "${dn}": ${JSON.stringify(data)}`,
+                context: LdapDomain.name,
+                function: 'modify',
+                ...loggerContext,
+              });
+
+              resolve(true);
+            });
           }
         }),
     );
@@ -851,44 +843,44 @@ export class LdapDomain extends EventEmitter {
 
       // 2. Attempt to bind as that user to check password.
       return new Promise<LdapResponseUser>((resolve, reject) => {
-        this.userClient.bind(
-          foundUser[this.options.bindProperty || 'dn'],
-          password,
-          async (bindError): Promise<unknown | LdapResponseUser> => {
-            if (bindError) {
-              this.logger.error({
-                message: `${this.domainName}: bind error: ${bindError.toString()}`,
-                error: bindError,
-                context: LdapDomain.name,
-                function: 'authenticate',
-                ...loggerContext,
-              });
+        this.userClient.bind(foundUser[this.options.bindProperty || 'dn'], password, async (bindError): Promise<
+          unknown | LdapResponseUser
+        > => {
+          if (bindError) {
+            this.logger.error({
+              message: `${this.domainName}: bind error: ${bindError.toString()}`,
+              error: bindError,
+              context: LdapDomain.name,
+              function: 'authenticate',
+              ...loggerContext,
+            });
 
-              return reject(bindError);
-            }
+            return reject(bindError);
+          }
 
-            // 3. If requested, fetch user groups
-            try {
-              foundUser.groups = await this.getGroups({ user: foundUser, loggerContext });
+          // 3. If requested, fetch user groups
+          try {
+            foundUser.groups = await this.getGroups({ user: foundUser, loggerContext });
 
-              return resolve(foundUser);
-            } catch (error) {
-              this.logger.error({
-                message: `${this.domainName}: Authenticate error: ${error.toString()}`,
-                error,
-                context: LdapDomain.name,
-                function: 'authenticate',
-                ...loggerContext,
-              });
+            return resolve(foundUser);
+          } catch (error: unknown) {
+            const errorMessage = error instanceof Error ? error.toString() : JSON.stringify(error);
+            this.logger.error({
+              message: `${this.domainName}: Authenticate error: ${errorMessage}`,
+              error,
+              context: LdapDomain.name,
+              function: 'authenticate',
+              ...loggerContext,
+            });
 
-              return reject(error);
-            }
-          },
-        );
+            return reject(error);
+          }
+        });
       });
-    } catch (error) {
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.toString() : JSON.stringify(error);
       this.logger.error({
-        message: `${this.domainName}: LDAP auth error: ${error.toString()}`,
+        message: `${this.domainName}: LDAP auth error: ${errorMessage}`,
         error,
         context: LdapDomain.name,
         function: 'authenticate',

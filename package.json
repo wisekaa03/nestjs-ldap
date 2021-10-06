@@ -30,7 +30,7 @@
     "cache-manager": "^3.4.4",
     "cache-manager-ioredis": "^2.1.0",
     "ldapjs": "^2.3.1",
-    "rxjs": "^7.3.0"
+    "rxjs": "7.4.0"
   },
   "devDependencies": {
     "@nestjs/config": "^1.0.1",

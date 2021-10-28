@@ -33,7 +33,7 @@
     "rxjs": "^7.3.0"
   },
   "devDependencies": {
-    "@nestjs/config": "^1.0.1",
+    "@nestjs/config": "1.0.3",
     "@nestjs/core": "^8.0.6",
     "@nestjs/testing": "^8.0.6",
     "@types/asn1": "^0.2.0",

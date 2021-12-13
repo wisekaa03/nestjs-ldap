@@ -24,7 +24,6 @@
     "noLib": false,
     "target": "es2020",
     "skipLibCheck": true,
-    "lib": ["ES2020"],
 
     "rootDir": "./lib"
   },

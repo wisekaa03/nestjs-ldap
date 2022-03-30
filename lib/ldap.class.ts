@@ -843,39 +843,41 @@ export class LdapDomain extends EventEmitter {
 
       // 2. Attempt to bind as that user to check password.
       return new Promise<LdapResponseUser>((resolve, reject) => {
-        this.userClient.bind(foundUser[this.options.bindProperty || 'dn'], password, async (bindError): Promise<
-          unknown | LdapResponseUser
-        > => {
-          if (bindError) {
-            this.logger.error({
-              message: `${this.domainName}: bind error: ${bindError.toString()}`,
-              error: bindError,
-              context: LdapDomain.name,
-              function: 'authenticate',
-              ...loggerContext,
-            });
+        this.userClient.bind(
+          foundUser[this.options.bindProperty || 'dn'],
+          password,
+          async (bindError): Promise<unknown | LdapResponseUser> => {
+            if (bindError) {
+              this.logger.error({
+                message: `${this.domainName}: bind error: ${bindError.toString()}`,
+                error: bindError,
+                context: LdapDomain.name,
+                function: 'authenticate',
+                ...loggerContext,
+              });
 
-            return reject(bindError);
-          }
+              return reject(bindError);
+            }
 
-          // 3. If requested, fetch user groups
-          try {
-            foundUser.groups = await this.getGroups({ user: foundUser, loggerContext });
+            // 3. If requested, fetch user groups
+            try {
+              foundUser.groups = await this.getGroups({ user: foundUser, loggerContext });
 
-            return resolve(foundUser);
-          } catch (error: unknown) {
-            const errorMessage = error instanceof Error ? error.toString() : JSON.stringify(error);
-            this.logger.error({
-              message: `${this.domainName}: Authenticate error: ${errorMessage}`,
-              error,
-              context: LdapDomain.name,
-              function: 'authenticate',
-              ...loggerContext,
-            });
+              return resolve(foundUser);
+            } catch (error: unknown) {
+              const errorMessage = error instanceof Error ? error.toString() : JSON.stringify(error);
+              this.logger.error({
+                message: `${this.domainName}: Authenticate error: ${errorMessage}`,
+                error,
+                context: LdapDomain.name,
+                function: 'authenticate',
+                ...loggerContext,
+              });
 
-            return reject(error);
-          }
-        });
+              return reject(error);
+            }
+          },
+        );
       });
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.toString() : JSON.stringify(error);

@@ -26,7 +26,7 @@
     "**/**/rimraf": "^3"
   },
   "dependencies": {
-    "@nestjs/common": "^8.4.3",
+    "@nestjs/common": "8.4.6",
     "bcrypt": "^5.0.1",
     "cache-manager": "^3.6.0",
     "cache-manager-ioredis": "^2.1.0",
@@ -35,8 +35,8 @@
   },
   "devDependencies": {
     "@nestjs/config": "^2.0.0",
-    "@nestjs/core": "^8.4.3",
-    "@nestjs/testing": "^8.4.3",
+    "@nestjs/core": "8.4.6",
+    "@nestjs/testing": "8.4.6",
     "@types/asn1": "^0.2.0",
     "@types/bcrypt": "^5.0.0",
     "@types/cache-manager": "^3.4.3",

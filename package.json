@@ -41,7 +41,7 @@
     "@types/bcrypt": "^5.0.0",
     "@types/cache-manager": "^4.0.0",
     "@types/cache-manager-ioredis": "^2.0.2",
-    "@types/ldapjs": "^2.2.2",
+    "@types/ldapjs": "2.2.4",
     "@types/node": "^18.0.0",
     "@typescript-eslint/eslint-plugin": "^5.29.0",
     "@typescript-eslint/parser": "^5.29.0",

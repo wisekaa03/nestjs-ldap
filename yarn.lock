@@ -764,10 +764,10 @@
   resolved "https://registry.yarnpkg.com/@types/json-schema/-/json-schema-7.0.11.tgz#d421b6c527a3037f7c84433fd2c4229e016863d3"
   integrity sha512-wOuvG1SN4Us4rez+tylwwwCV1psiNVOkJeM3AUWUNWg/jDQY2+HE/444y5gc+jBmRqASOm2Oeh5c1axHobwRKQ==
 
-"@types/ldapjs@^2.2.2":
-  version "2.2.2"
-  resolved "https://registry.yarnpkg.com/@types/ldapjs/-/ldapjs-2.2.2.tgz#cf79510d8dc34e5579442c2743f8a228427eb99c"
-  integrity sha512-U5HdnwIZ5uZa+f3usxdqgyfNmOROxOxXvQdQtsu6sKo8fte5vej9br2csHxPvXreAbAO1bs8/rdEzvCLpi67nQ==
+"@types/ldapjs@2.2.4":
+  version "2.2.4"
+  resolved "https://registry.yarnpkg.com/@types/ldapjs/-/ldapjs-2.2.4.tgz#f784276f81f199b0118f66bc8325691b6750adf7"
+  integrity sha512-+ZMVolW4N1zpnQ4SgH8nfpIFuiDOfbnXSbwQoBiLaq8mF0vo8FOKotQzKkfoWxbV0lWU1d4V+keZZ07klyOSng==
   dependencies:
     "@types/node" "*"
 

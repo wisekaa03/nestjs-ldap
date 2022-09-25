@@ -721,10 +721,15 @@
     "@types/cache-manager" "*"
     "@types/ioredis" "*"
 
-"@types/cache-manager@*", "@types/cache-manager@^4.0.0":
+"@types/cache-manager@*":
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/@types/cache-manager/-/cache-manager-4.0.0.tgz#6522a64432bb900d7e6654270fec21bc3c3de139"
   integrity sha512-uGnPOCM3PtlqZagds3i8mNyEwKLgZpKgswqmlF2ahmh4D1TN1aLYxYez2PDFDy42IGwLTbuHWSiF62I2jouM7g==
+
+"@types/cache-manager@4.0.2":
+  version "4.0.2"
+  resolved "https://registry.yarnpkg.com/@types/cache-manager/-/cache-manager-4.0.2.tgz#5e76dd9e7881c23f332c2f48e5f326bd05ba9ac9"
+  integrity sha512-fT5FMdzsiSX0AbgnS5gDvHl2Nco0h5zYyjwDQy4yPC7Ww6DeGMVKPRqIZtg9HOXDV2kkc18SL1B0N8f0BecrCA==
 
 "@types/graceful-fs@^4.1.3":
   version "4.1.5"
@@ -1145,10 +1150,10 @@ cache-manager-ioredis@^2.1.0:
   dependencies:
     ioredis "^4.14.1"
 
-cache-manager@^4.0.1:
-  version "4.0.1"
-  resolved "https://registry.yarnpkg.com/cache-manager/-/cache-manager-4.0.1.tgz#185b1d1aa1385fbb4fb0ec88fda7676f566a15b8"
-  integrity sha512-JWdtjdX8e0e6eMehAZsdJvBMvHn/pVQGYUjgzc1ILFH0vtcffb9R7XIEAqfYgEeaVJVCOSP4+dxCius+ciW0RA==
+cache-manager@4.1.0:
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/cache-manager/-/cache-manager-4.1.0.tgz#aa986421f1c975a862d6de88edb9ab1d30f4bd39"
+  integrity sha512-ZGM6dLxrP65bfOZmcviWMadUOCICqpLs92+P/S5tj8onz+k+tB7Gr+SAgOUHCQtfm2gYEQDHiKeul4+tYPOJ8A==
   dependencies:
     async "3.2.3"
     lodash.clonedeep "^4.5.0"

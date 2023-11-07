@@ -714,14 +714,19 @@
     "@types/node" "*"
 
 "@types/cache-manager-ioredis@^2.0.2":
-  version "2.0.2"
-  resolved "https://registry.yarnpkg.com/@types/cache-manager-ioredis/-/cache-manager-ioredis-2.0.2.tgz#d50e9074ba410744396a631d5474023a5ce4079c"
-  integrity sha512-mcn1k5bCJ/iAIymLRq4d6KSvEdrdspuo8KEIIPkPEl5WP+2CC7NWtRJmgFBoNqCgNxr++B62kOmIH1HYXAiBdA==
+  version "2.0.6"
+  resolved "https://registry.yarnpkg.com/@types/cache-manager-ioredis/-/cache-manager-ioredis-2.0.6.tgz#eba1db3336a54f4595503af5b03814f14c6bbbae"
+  integrity sha512-MNJLj/I8hqXQEv+erzrJE2vnZIMbkgbZspaJDwWKk8b4smFkxSLnvienBrILxw7O/xZKtPcIW0Ml7RBXTseJGQ==
   dependencies:
     "@types/cache-manager" "*"
-    "@types/ioredis" "*"
+    "@types/ioredis" "^4.28.10"
 
-"@types/cache-manager@*", "@types/cache-manager@^4.0.0":
+"@types/cache-manager@*":
+  version "4.0.5"
+  resolved "https://registry.yarnpkg.com/@types/cache-manager/-/cache-manager-4.0.5.tgz#1f0629de37249a221127d4903564161a56732077"
+  integrity sha512-DWzxGv0Kt7NKM2uFoHOHblobJJepgoC56sAEkyFJhqRG36nxvfkrr4Gb/1TXza32GC2A+Z8+bgxFT5FEMGdkyg==
+
+"@types/cache-manager@^4.0.0":
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/@types/cache-manager/-/cache-manager-4.0.0.tgz#6522a64432bb900d7e6654270fec21bc3c3de139"
   integrity sha512-uGnPOCM3PtlqZagds3i8mNyEwKLgZpKgswqmlF2ahmh4D1TN1aLYxYez2PDFDy42IGwLTbuHWSiF62I2jouM7g==
@@ -733,7 +738,7 @@
   dependencies:
     "@types/node" "*"
 
-"@types/ioredis@*":
+"@types/ioredis@^4.28.10":
   version "4.28.10"
   resolved "https://registry.yarnpkg.com/@types/ioredis/-/ioredis-4.28.10.tgz#40ceb157a4141088d1394bb87c98ed09a75a06ff"
   integrity sha512-69LyhUgrXdgcNDv7ogs1qXZomnfOEnSmrmMFqKgt1XMJxmoOSG/u3wYy13yACIfKuMJ8IhKgHafDO3sx19zVQQ==
@@ -771,7 +776,14 @@
   dependencies:
     "@types/node" "*"
 
-"@types/node@*", "@types/node@^18.0.0":
+"@types/node@*":
+  version "20.8.10"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-20.8.10.tgz#a5448b895c753ae929c26ce85cab557c6d4a365e"
+  integrity sha512-TlgT8JntpcbmKUFzjhsyhGfP2fsiz1Mv56im6enJ905xG1DAYesxJaeSbGqQmAw8OWPdhyJGhGSQGKRNJ45u9w==
+  dependencies:
+    undici-types "~5.26.4"
+
+"@types/node@^18.0.0":
   version "18.0.0"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-18.0.0.tgz#67c7b724e1bcdd7a8821ce0d5ee184d3b4dd525a"
   integrity sha512-cHlGmko4gWLVI27cGJntjs/Sj8th9aYwplmZFwmmgYQQvL5NUsgVJG7OddLvNfLqYS31KFN0s3qlaD9qCaxACA==
@@ -3241,6 +3253,11 @@ typescript@^4.7.4:
   version "4.7.4"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.7.4.tgz#1a88596d1cf47d59507a1bcdfb5b9dfe4d488235"
   integrity sha512-C0WQT0gezHuw6AdY1M2jxUO83Rjf0HP7Sk1DtXj6j1EwkQNZrHAg2XPWlq62oqEhYvONq5pkC2Y9oPljWToLmQ==
+
+undici-types@~5.26.4:
+  version "5.26.5"
+  resolved "https://registry.yarnpkg.com/undici-types/-/undici-types-5.26.5.tgz#bcd539893d00b56e964fd2657a4866b221a65617"
+  integrity sha512-JlCMO+ehdEIKqlFxk6IfVoAUVmgz7cU7zD/h9XZ0qzeosSHmUJVOzSQvvYSYWXkFXC+IfLKSIffhv0sVZup6pA==
 
 update-browserslist-db@^1.0.0:
   version "1.0.4"

@@ -646,7 +646,7 @@ export class LdapDomain extends EventEmitter {
     }
 
     return this.search({
-      searchBase: this.options.searchBase,
+      searchBase: this.options.groupSearchBase || this.options.searchBase,
       options,
       loggerContext,
     })

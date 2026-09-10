@@ -667,9 +667,9 @@
     "@sinonjs/commons" "^1.7.0"
 
 "@types/asn1@^0.2.0":
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/@types/asn1/-/asn1-0.2.0.tgz#23b568688b321740bd4eafef49e6b13ffc101b31"
-  integrity sha512-5TMxIpYbIA9c1J0hYQjQDX3wr+rTgQEAXaW2BI8ECM8FO53wSW4HFZplTalrKSHuZUc76NtXcePRhwuOHqGD5g==
+  version "0.2.4"
+  resolved "https://registry.yarnpkg.com/@types/asn1/-/asn1-0.2.4.tgz#a0f89f9ddad8186c9c081c5df2e5cade855d2ac0"
+  integrity sha512-V91DSJ2l0h0gRhVP4oBfBzRBN9lAbPUkGDMCnwedqPKX2d84aAMc9CulOvxdw1f7DfEYx99afab+Rsm3e52jhA==
   dependencies:
     "@types/node" "*"
 
@@ -771,7 +771,14 @@
   dependencies:
     "@types/node" "*"
 
-"@types/node@*", "@types/node@^18.0.0":
+"@types/node@*":
+  version "22.20.2"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-22.20.2.tgz#daae777b5f5965a587f50cc80d5364c2ddf27e36"
+  integrity sha512-xlvWf4Vs9n1PEVYwP1n4vvG07M6y8WgvJ2t0vbrWTmijsIHp1cS+uJ2kMIRdY3nHZK0nCYKrPeD171+SzF4/zw==
+  dependencies:
+    undici-types "~6.21.0"
+
+"@types/node@^18.0.0":
   version "18.0.0"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-18.0.0.tgz#67c7b724e1bcdd7a8821ce0d5ee184d3b4dd525a"
   integrity sha512-cHlGmko4gWLVI27cGJntjs/Sj8th9aYwplmZFwmmgYQQvL5NUsgVJG7OddLvNfLqYS31KFN0s3qlaD9qCaxACA==
@@ -3241,6 +3248,11 @@ typescript@^4.7.4:
   version "4.7.4"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.7.4.tgz#1a88596d1cf47d59507a1bcdfb5b9dfe4d488235"
   integrity sha512-C0WQT0gezHuw6AdY1M2jxUO83Rjf0HP7Sk1DtXj6j1EwkQNZrHAg2XPWlq62oqEhYvONq5pkC2Y9oPljWToLmQ==
+
+undici-types@~6.21.0:
+  version "6.21.0"
+  resolved "https://registry.yarnpkg.com/undici-types/-/undici-types-6.21.0.tgz#691d00af3909be93a7faa13be61b3a5b50ef12cb"
+  integrity sha512-iwDZqg0QAGrg9Rav5H4n0M64c3mkR59cJ6wQp+7C4nI0gsmExaedaYLNO44eT4AtBBwjbTiGPMlt2Md0T9H9JQ==
 
 update-browserslist-db@^1.0.0:
   version "1.0.4"
